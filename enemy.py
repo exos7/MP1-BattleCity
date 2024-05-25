@@ -43,5 +43,6 @@ class Enemy:
             
                   
     def draw(self):
-        # pyxel.cls(0)
+        if self.isAlive == False:
+            pyxel.cls(0)
         pyxel.blt(self.x, self.y, 1, self.u, self.v, 16, 16)
