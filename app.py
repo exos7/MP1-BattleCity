@@ -13,9 +13,6 @@ class App:
     def update(self):
         if self.tank.isAlive == True:
             self.tank.update()
-            if pyxel.btn(pyxel.KEY_SPACE):
-                print('space')
-                self.tank.draw()
     def draw(self):
         self.tank.draw()
 
