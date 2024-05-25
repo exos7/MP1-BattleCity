@@ -15,3 +15,7 @@ def atTop(x, y):
 def atBottom(x, y):
     if pyxel.height - 16 == y:
         return True
+
+def in_bounds(x, y):
+        if 0 <= x <= pyxel.width and 0 <= y <= pyxel.height:
+            return True
