@@ -30,6 +30,7 @@ class Tank:
                 self.v = 0
                 self.y -= 8
             if pyxel.btn(pyxel.KEY_A):
+                print('left')
                 self.u = 8
                 self.v = 8
                 self.x -= 8
