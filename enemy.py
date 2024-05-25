@@ -10,13 +10,18 @@ class Enemy:
         self.y = y
         self.u, self.v = 0, 0
         self.isAlive = True
+        self.Dir = 0
 
     def in_bounds(self, x, y):
         if 0 <= x <= pyxel.width and 0 <= y <= pyxel.height:
             return True
 
     def update(self):
-        DirInt = random.randint(0, 3)   
+        if pyxel.frame_count % 20 == 0:
+            NewDir = random.randint(0, 3) 
+            self.Dir = NewDir
+        DirInt = self.Dir
+        # DirInt = random.randint(0, 3) 
         if self.in_bounds(self.x, self.y):
             if DirInt == 0 and not atTop(self.x, self.y):
                 self.u = 0
@@ -34,6 +39,8 @@ class Enemy:
                 self.u = 16
                 self.v = 32
                 self.x += MoveSpeed
+        
+            
                   
     def draw(self):
         # pyxel.cls(0)
