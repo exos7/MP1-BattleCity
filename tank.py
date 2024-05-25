@@ -10,7 +10,7 @@ class Tank:
         self.y = y
         self.u, self.v = 0, 0
         self.isAlive = True
-        self.facing = 0 # 0 - up, 1 - right, 2 - down, 4 - left
+        self.facing = 0 # 0 - up, 1 - right, 2 - down, 3 - left
 
     def update(self):
         click = False
@@ -28,7 +28,7 @@ class Tank:
                 self.v = 16
                 self.x -= MoveSpeed
                 click = True
-                self.facing = 4
+                self.facing = 3
             if pyxel.btn(pyxel.KEY_S) and not atBottom(self.x, self.y) and not click:
                 print('s')
                 self.u = 0
