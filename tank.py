@@ -15,27 +15,32 @@ class Tank:
             return True
 
     def update(self):
+        click = False
         if self.in_bounds(self.x, self.y):
-            if pyxel.btn(pyxel.KEY_W) and not atTop(self.x, self.y):
+            if pyxel.btn(pyxel.KEY_W) and not atTop(self.x, self.y) and not click:
                 print('w')
                 self.u = 0
                 self.v = 0
                 self.y -= MoveSpeed
-            if pyxel.btn(pyxel.KEY_A) and not atLeft(self.x, self.y):
+                click = True
+            if pyxel.btn(pyxel.KEY_A) and not atLeft(self.x, self.y) and not click:
                 print('a')
                 self.u = 16
                 self.v = 16
                 self.x -= MoveSpeed
-            if pyxel.btn(pyxel.KEY_S) and not atBottom(self.x, self.y):
+                click = True
+            if pyxel.btn(pyxel.KEY_S) and not atBottom(self.x, self.y) and not click:
                 print('s')
                 self.u = 0
                 self.v = 16
                 self.y += MoveSpeed
-            if pyxel.btn(pyxel.KEY_D) and not atRight(self.x, self.y):
+                click = True
+            if pyxel.btn(pyxel.KEY_D) and not atRight(self.x, self.y) and not click:
                 print('d')
                 self.u = 16
                 self.v = 0
                 self.x += MoveSpeed
+                click = True
                   
     def draw(self):
         pyxel.cls(0)
