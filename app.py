@@ -25,6 +25,7 @@ class Tank:
     def update(self):
         if self.in_bounds(self.x, self.y):
             if pyxel.btn(pyxel.KEY_W):
+                print("up")
                 self.u = 0
                 self.v = 0
                 self.y -= 8
