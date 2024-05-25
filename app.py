@@ -1,7 +1,7 @@
 import pyxel
 
 def atRight(x, y):
-    if pyxel.width - 8 == x:
+    if pyxel.width - 16 == x:
         return True
 
 def atLeft(x, y):
@@ -13,7 +13,7 @@ def atTop(x, y):
         return True
 
 def atBottom(x, y):
-    if pyxel.height - 8 == y:
+    if pyxel.height - 16 == y:
         return True
 
 class Tank:
@@ -52,13 +52,13 @@ class Tank:
                   
     def draw(self):
         pyxel.cls(0)
-        pyxel.blt(self.x, self.y, 0, self.u, self.v, 16, 16)
+        pyxel.blt(self.x, self.y, 1, self.u, self.v, 16, 16)
 
 
 
 class App:
     def __init__(self):
-        pyxel.init(160, 120)
+        pyxel.init(320, 240)
         self.x = 0
         self.y = 0
         self.tank = Tank(self.x, self.y)
