@@ -16,28 +16,28 @@ class Tank:
         click = False
         if in_bounds(self.x, self.y):
             if pyxel.btn(pyxel.KEY_W) and not atTop(self.x, self.y) and not click:
-                print('w')
+                # print('w')
                 self.u = 0
                 self.v = 0
                 self.y -= MoveSpeed
                 click = True
                 self.facing = 0
             if pyxel.btn(pyxel.KEY_A) and not atLeft(self.x, self.y) and not click:
-                print('a')
+                # print('a')
                 self.u = 16
                 self.v = 16
                 self.x -= MoveSpeed
                 click = True
                 self.facing = 3
             if pyxel.btn(pyxel.KEY_S) and not atBottom(self.x, self.y) and not click:
-                print('s')
+                # print('s')
                 self.u = 0
                 self.v = 16
                 self.y += MoveSpeed
                 click = True
                 self.facing = 2
             if pyxel.btn(pyxel.KEY_D) and not atRight(self.x, self.y) and not click:
-                print('d')
+                # print('d')
                 self.u = 16
                 self.v = 0
                 self.x += MoveSpeed
@@ -46,4 +46,5 @@ class Tank:
                   
     def draw(self):
         pyxel.cls(0)
-        pyxel.blt(self.x, self.y, 1, self.u, self.v, 16, 16)
+        if self.isAlive:
+            pyxel.blt(self.x, self.y, 1, self.u, self.v, 16, 16)

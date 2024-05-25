@@ -5,13 +5,23 @@ BULLET_WIDTH = 2
 BULLET_HEIGHT = 2
 
 class Bullet:
-    def __init__(self, x, y, facing):
+    def __init__(self, x, y, facing, isPlayer):
+        self.facing = facing
         self.x = x
         self.y = y
+        if self.facing == 0:
+            self.y -= 8
+        if self.facing == 1:
+            self.x += 8
+        if self.facing == 2:
+            self.y += 8
+        if self.facing == 3:
+            self.x -= 8
         self.w = BULLET_WIDTH
         self.h = BULLET_HEIGHT
-        self.facing = facing
         self.isAlive = True
+        self.isPlayer = isPlayer
+
 
     def update(self):
         if self.facing == 0:
