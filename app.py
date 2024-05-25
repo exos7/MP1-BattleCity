@@ -1,4 +1,5 @@
 import pyxel
+import random
 from tank import Tank
 from enemy import Enemy
 from bullet import Bullet
@@ -24,7 +25,10 @@ class App:
             self.tank.update()
             for enemy in self.enemies:
                 enemy.update()
-
+                willShoot = random.randint(0,40)
+                enemyBullet = Bullet(enemy.x + (16/2), enemy.y + (16/2), enemy.Dir)
+                if willShoot == 1:
+                    self.bullets.append(enemyBullet)
             if pyxel.btnp(pyxel.KEY_SPACE):
                 self.bullets.append(Bullet(self.tank.x + (16/2), self.tank.y + (16/2), self.tank.facing))
 
