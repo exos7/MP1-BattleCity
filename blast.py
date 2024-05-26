@@ -10,7 +10,7 @@ class Blast:
     def update(self):
         self.radius += 1
         if self.radius > 8:
-            self.is_alive = False
+            self.isAlive = False
 
     def draw(self):
         pyxel.circ(self.x, self.y, self.radius, 7)

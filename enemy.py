@@ -5,12 +5,14 @@ import pyxel
 MoveSpeed = 2
 
 class Enemy:
-    def __init__(self, x, y):
+    def __init__(self, x, y, num):
         self.x = x
         self.y = y
         self.u, self.v = 0, 0
         self.isAlive = True
         self.Dir = 0
+        self.isShooting = False
+        self.num = num
 
     def in_bounds(self, x, y):
         if 0 <= x <= pyxel.width and 0 <= y <= pyxel.height:

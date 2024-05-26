@@ -11,6 +11,7 @@ class Tank:
         self.u, self.v = 0, 0
         self.isAlive = True
         self.facing = 0 # 0 - up, 1 - right, 2 - down, 3 - left
+        self.isShooting = 0
 
     def update(self):
         click = False
