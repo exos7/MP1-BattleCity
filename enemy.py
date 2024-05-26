@@ -2,7 +2,7 @@ from functions import atBottom, atTop, atLeft, atRight
 import random
 import pyxel
 
-MoveSpeed = 4
+MoveSpeed = 2
 
 class Enemy:
     def __init__(self, x, y):
