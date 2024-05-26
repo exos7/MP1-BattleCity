@@ -1,7 +1,7 @@
 from functions import atBottom, atTop, atLeft, atRight, in_bounds
 import pyxel
 
-MoveSpeed = 4
+MoveSpeed = 2
 
 
 class Tank:
