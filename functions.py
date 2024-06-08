@@ -23,3 +23,5 @@ def in_bounds(x, y):
 def collision(entity1, entity2):
     if (entity1.x <= entity2.x <= entity1.x+16) and (entity1.y <= entity2.y <= entity1.y + 16):
         return True
+    
+    
