@@ -1,11 +1,12 @@
 import pyxel
 import random
-from tank import Tank
+from tank import Tank, MoveSpeed
 from enemy import Enemy
 from bullet import Bullet
 from functions import in_bounds, collision
 from blast import Blast
 from level import Level_1
+from block import SIZE
 
 
 BULLET_FREQUENCY = 20
@@ -31,9 +32,10 @@ class App:
         self.bullets = []
         self.blasts = []
         self.level_1 = Level_1()
+        self.blocks = self.level_1.coords 
         
         for _ in range(5):
-            self.enemies.append(Enemy(320//2, 240//2, _))
+            self.enemies.append(Enemy(192, 176, _))
     
         pyxel.load('PYXEL_RESOURCE_FILE.pyxres')
         pyxel.run(self.update, self.draw)
@@ -81,6 +83,7 @@ class App:
             if self.blasts:
                 entityUpdate(self.blasts)
 
+          
                 
 
     def draw(self):
