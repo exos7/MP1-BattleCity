@@ -1,4 +1,3 @@
-
 import pyxel
 
 def atRight(x, y):
@@ -21,11 +20,6 @@ def in_bounds(x, y):
     if 0 <= x <= pyxel.width and 0 <= y <= pyxel.height:
         return True
 
-def collision(entity1, entity2):
+def is_colliding(entity1, entity2):
     if (entity1.x <= entity2.x <= entity1.x+16) and (entity1.y <= entity2.y <= entity1.y + 16):
         return True
-    
-def generate_block_limits(x, y):
-    for i in range(x, x+16):
-        for j in range(y, y+16):
-            return (i,j)
