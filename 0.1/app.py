@@ -3,7 +3,7 @@ import random
 from tank import Tank
 from enemy import Enemy
 from bullet import Bullet
-from functions import in_bounds, collision
+from functions import in_bounds, is_colliding
 from blast import Blast
 from level import Level_1
 
@@ -54,13 +54,13 @@ class App:
                             if bullet.isPlayer == True:
                                 self.tank.isShooting = False
                             self.bullets.remove(bullet)
-                        if collision(enemy, bullet) and collision(enemy, bullet) and bullet.isPlayer == True:
+                        if is_colliding(enemy, bullet) and is_colliding(enemy, bullet) and bullet.isPlayer == True:
                             self.enemies.remove(enemy)
                             self.bullets.remove(bullet)
                             self.tank.isShooting = 0
                             self.blasts.append(Blast(enemy.x, enemy.y))
                             self.tank.isShooting = False
-                        if collision(self.tank, bullet) and collision(self.tank, bullet):     
+                        if is_colliding(self.tank, bullet) and is_colliding(self.tank, bullet):     
                             self.tank.isAlive = True
                             print('tank was hit')
                             self.bullets.remove(bullet) 

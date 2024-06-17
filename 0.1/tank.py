@@ -1,4 +1,4 @@
-from functions import atBottom, atTop, atLeft, atRight, in_bounds
+from functions import atBottom, atTop, atLeft, atRight, in_bounds, is_colliding
 import pyxel
 
 MoveSpeed = 2
