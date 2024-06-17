@@ -1,6 +1,6 @@
 import pyxel
 import random
-from tank import Tank
+from player import Player
 from enemy import Enemy
 from bullet import Bullet
 from functions import in_bounds, is_colliding
@@ -25,7 +25,7 @@ class App:
         pyxel.init(208, 208)
         self.x = 0
         self.y = 0
-        self.tank = Tank(self.x, self.y)
+        self.tank = Player(self.x, self.y)
         self.enemies = []
         self.playerBullets = []
         self.bullets = []
