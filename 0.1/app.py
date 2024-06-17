@@ -30,16 +30,16 @@ class App:
         self.playerBullets = []
         self.bullets = []
         self.blasts = []
-        self.level_1 = Level_1()
-        
-        for _ in range(5):
-            self.enemies.append(Enemy(320//2, 240//2, _))
+        # self.level_1 = Level_1()
     
         pyxel.load('PYXEL_RESOURCE_FILE.pyxres')
         pyxel.run(self.update, self.draw)
 
     def update(self):
-        
+        for enemies in range(10):
+            while len(self.enemies) < 5:
+                self.enemies.append(Enemy(320//2, 240//2, enemies))
+
         if self.tank.isAlive == True or False:
             self.tank.update()    
             if pyxel.btnp(pyxel.KEY_SPACE) and not self.tank.isShooting:
@@ -63,7 +63,8 @@ class App:
                         if is_colliding(self.tank, bullet) and is_colliding(self.tank, bullet):     
                             self.tank.isAlive = True
                             print('tank was hit')
-                            self.bullets.remove(bullet) 
+                            self.bullets.remove(bullet)
+                            self.tank.isShooting = False
                              
                     willShoot = random.randint(0, BULLET_FREQUENCY)
                     # willShoot = 0
@@ -89,7 +90,7 @@ class App:
         entityDraw(self.bullets)
         entityDraw(self.blasts)
 
-        levelDraw(self.level_1)
+        # levelDraw(self.level_1)
         
 
 App()

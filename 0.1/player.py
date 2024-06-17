@@ -12,8 +12,10 @@ class Player:
         self.isAlive = True
         self.facing = 0 # 0 - up, 1 - right, 2 - down, 3 - left
         self.isShooting = 0
+        self.validCoords = []
 
     def update(self):
+        
         click = False
         if in_bounds(self.x, self.y):
             if pyxel.btn(pyxel.KEY_W) and not atTop(self.x, self.y) and not click:
