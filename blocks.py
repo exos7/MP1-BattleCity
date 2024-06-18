@@ -25,7 +25,7 @@ class Brick(Block):
         pass
 
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 0, 16, 16, 16)
+        pyxel.blt(self.x, self.y, 0, 0, 16, self.height, self.width)
 
 class Water(Block):
     
@@ -37,7 +37,7 @@ class Water(Block):
         pass
 
     def draw(self):
-        pass
+        pyxel.blt(self.x, self.y, 0, 0, 32, self.height, self.width)
 
 class Leaves(Block):
     
@@ -49,7 +49,7 @@ class Leaves(Block):
         pass
 
     def draw(self):
-        pass
+        pyxel.blt(self.x, self.y, 0, 16, 0, self.height, self.width)
 
 class Unbreakable(Block):
     
@@ -61,4 +61,4 @@ class Unbreakable(Block):
         pass
 
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 0, 0, 16, 16)
+        pyxel.blt(self.x, self.y, 0, 0, 0, self.height, self.width)

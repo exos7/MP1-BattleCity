@@ -38,7 +38,8 @@ class App:
         self.startX, self.startY = ((pyxel.width - borderLeft - borderRight) // 2) + tileSize // 2, pyxel.height - borderBot - tileSize 
         pyxel.load('PYXEL_RESOURCE_FILE.pyxres')
         self.player = Player(self.startX, self.startY)
-        self.level = [Brick(tileSize * 12, tileSize*4), Unbreakable(tileSize * 13, tileSize*4), Brick(tileSize*14, tileSize*4)]
+        self.level = [Brick(tileSize * 12, tileSize*4), Unbreakable(tileSize * 13, tileSize*4), \
+        Brick(tileSize*14, tileSize*4), Leaves(tileSize*15, tileSize*4), Water(tileSize*16, tileSize*4),]
 
         pyxel.mouse(True)
 
@@ -52,43 +53,53 @@ class App:
         entityUpdate(self.player.bullets)
         entityUpdate(self.level)
 
-        if inBounds(self.player.x, self.player.y): # movement logic
+        # movement mechanics neon mains
+        if inBounds(self.player.x, self.player.y):
             click = False
             if pyxel.btn(pyxel.KEY_W) and not click:
                 click = True
                 self.player.facing = 0
-                if not atTop(self.player.x, self.player.y) and not any([boundingBoxCollisionBottom(self.player, block) for block in self.level]):
+                if not atTop(self.player.x, self.player.y) and not any([boundingBoxCollisionBottom(self.player, block) for block in self.level if block.type != 'leaves']):
                     self.player.y -= moveSpeed
             if pyxel.btn(pyxel.KEY_D) and not click:
                 click = True
                 self.player.facing = 1
-                if not atRight(self.player.x, self.player.y) and not any([boundingBoxCollisionLeft(self.player, block) for block in self.level]):
+                if not atRight(self.player.x, self.player.y) and not any([boundingBoxCollisionLeft(self.player, block) for block in self.level if block.type != 'leaves']):
                     self.player.x += moveSpeed
             if pyxel.btn(pyxel.KEY_S) and not click:
                 click = True
                 self.player.facing = 2
-                if not atBottom(self.player.x, self.player.y) and not any([boundingBoxCollisionTop(self.player, block) for block in self.level]):
+                if not atBottom(self.player.x, self.player.y) and not any([boundingBoxCollisionTop(self.player, block) for block in self.level if block.type != 'leaves']):
                     self.player.y += moveSpeed
             if pyxel.btn(pyxel.KEY_A) and not click:
                 click = True
                 self.player.facing = 3
-                if not atLeft(self.player.x, self.player.y) and not any([boundingBoxCollisionRight(self.player, block) for block in self.level]):
+                if not atLeft(self.player.x, self.player.y) and not any([boundingBoxCollisionRight(self.player, block) for block in self.level if block.type != 'leaves']):
                     self.player.x -= moveSpeed
 
+
+        # player shooting
         if pyxel.btnp(pyxel.KEY_SPACE):
             self.player.bullets.append(Bullet(self.player.x, self.player.y, self.player.facing))
 
+
+
+
+
+        # bullet collision
+        
         self.player.bullets = [bullet for bullet in self.player.bullets if inBounds(bullet.x, bullet.y)]
         
         for bullet in self.player.bullets:
             for block in self.level:
-                if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
-                boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block):
-                    self.player.bullets.remove(bullet) 
-                    if block.type == 'brick':
-                        block.health -= 10
-                        if block.health <= 0:
-                            self.level.remove(block)
+                if block.type == 'brick' or block.type == 'unbreakable':
+                    if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
+                    boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block):
+                        self.player.bullets.remove(bullet) 
+                        if block.type == 'brick':
+                            block.health -= 10
+                            if block.health <= 0:
+                                self.level.remove(block)
 
         
         
