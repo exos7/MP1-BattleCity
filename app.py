@@ -4,7 +4,7 @@ from player import Player
 from functions import boundingBox, inBounds, atTop, atBottom, atLeft, atRight, boundingBoxCollisionTop, \
 boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight
 from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize, level_1
-from blocks import Block, Brick, Water, Forest, Stone
+from blocks import Block, Brick, crackedBrick, Water, Forest, Stone
 from bullets import Bullet
 
 
@@ -49,12 +49,19 @@ class App:
                 elif tile == 'brick':
                     print(f'brick: {b.x}, {b.y}')
                     self.level.append(Brick(b.x, b.y))
+
+                elif tile == 'cracked_brick':
+                    print(f'cracked_brick: {b.x}, {b.y}')
+                    self.level.append(crackedBrick(b.x, b.y))
+
                 elif tile == 'stone':
                     print(f'stone: {b.x}, {b.y}')
                     self.level.append(Stone(b.x, b.y))
+
                 elif tile == 'water':
                     print(f'water: {b.x}, {b.y}')
                     self.level.append(Water(b.x, b.y))
+
                 elif tile == 'forest':
                     print(f'forest: {b.x}, {b.y}')
                     self.level.append(Forest(b.x, b.y))
@@ -114,15 +121,24 @@ class App:
         
         for bullet in self.player.bullets:
             for block in self.level:
-                if block.type == 'brick' or block.type == 'stone':
+                if block.type == 'brick':
                     if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
                     boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block):
-                        self.player.bullets.remove(bullet)
+                        # self.player.bullets.remove(bullet)
                         self.player.isShooting = False 
                         if block.type == 'brick':
-                            block.health -= 10
-                            if block.health <= 0:
-                                self.level.remove(block)
+                            self.level.remove(block)
+                            self.level.append(crackedBrick(block.x, block.y))
+                            
+                       
+                elif block.type == 'cracked_brick' or block.type == 'stone':
+                    if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
+                        boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block):
+                        self.player.isShooting = False 
+                        block.health -= 10
+                        if block.health <= 0:
+                            self.level.remove(block)
+                        self.player.bullets.remove(bullet)
 
         
     def draw(self):

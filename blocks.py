@@ -27,6 +27,19 @@ class Brick(Block):
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 0, 16, self.height, self.width)
 
+class crackedBrick(Block):
+
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.health = 20
+        self.type = 'cracked_brick'
+
+    def update(self):
+        pass
+
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, 16, 16, self.height, self.width)
+
 class Water(Block):
     
     def __init__(self, x, y):
