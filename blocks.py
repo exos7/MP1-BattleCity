@@ -18,7 +18,7 @@ class Brick(Block):
     
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.health = 100
+        self.health = 20
         self.type = 'brick'
     
     def update(self):
@@ -39,11 +39,11 @@ class Water(Block):
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 0, 32, self.height, self.width)
 
-class Leaves(Block):
+class Forest(Block):
     
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.type = 'leaves'
+        self.type = 'forest'
     
     def update(self):
         pass
@@ -51,11 +51,11 @@ class Leaves(Block):
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 16, 0, self.height, self.width)
 
-class Unbreakable(Block):
+class Stone(Block):
     
     def __init__(self, x, y):
         super().__init__(x, y)
-        self.type = 'unbreakable'
+        self.type = 'stone'
     
     def update(self):
         pass

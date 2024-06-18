@@ -29,6 +29,7 @@ def inBounds(x, y):
 def isColliding(entity1, entity2):
     if (entity1.x <= entity2.x <= entity1.x+16) and (entity1.y <= entity2.y <= entity1.y + 16):
         return True
+
     return False
 
 def boundingBox(entity):
