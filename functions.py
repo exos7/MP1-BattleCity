@@ -22,7 +22,7 @@ def atBottom(x, y):
     return False
 
 def inBounds(x, y):
-    if borderLeft <= x <= pyxel.width - borderRight and borderTop <= y <= pyxel.height - borderBot - borderTop:
+    if borderLeft <= x <= pyxel.width - borderRight and borderTop <= y <= pyxel.height - borderBot:
         return True
     return False
 

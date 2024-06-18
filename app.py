@@ -79,23 +79,25 @@ class App:
 
 
         # player shooting
-        if pyxel.btnp(pyxel.KEY_SPACE):
+        if pyxel.btnp(pyxel.KEY_SPACE) and not self.player.isShooting:
+            self.player.isShooting = True
             self.player.bullets.append(Bullet(self.player.x, self.player.y, self.player.facing))
 
 
-
-
-
         # bullet collision
-        
+
         self.player.bullets = [bullet for bullet in self.player.bullets if inBounds(bullet.x, bullet.y)]
+        
+        if len(self.player.bullets) == 0:
+            self.player.isShooting = False
         
         for bullet in self.player.bullets:
             for block in self.level:
                 if block.type == 'brick' or block.type == 'unbreakable':
                     if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
                     boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block):
-                        self.player.bullets.remove(bullet) 
+                        self.player.bullets.remove(bullet)
+                        self.player.isShooting = False 
                         if block.type == 'brick':
                             block.health -= 10
                             if block.health <= 0:
