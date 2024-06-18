@@ -1,4 +1,5 @@
 import pyxel
+from functions import boundingBox
 
 class Player:
 
@@ -9,6 +10,9 @@ class Player:
         self.isAlive = True
         self.facing = 0
         self.isShooting = False
+        self.width = 16
+        self.height = 16
+        
     
     def update(self):
         if self.facing == 0:
