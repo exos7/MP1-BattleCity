@@ -1,4 +1,4 @@
-from functions import atBottom, atTop, atLeft, atRight, in_bounds, is_colliding
+from functions import atBottom, atTop, atLeft, atRight, inBounds, isColliding
 import pyxel
 
 MoveSpeed = 2
@@ -17,7 +17,7 @@ class Player:
     def update(self):
         
         click = False
-        if in_bounds(self.x, self.y):
+        if inBounds(self.x, self.y):
             if pyxel.btn(pyxel.KEY_W) and not atTop(self.x, self.y) and not click:
                 # print('w')
                 self.u = 0
