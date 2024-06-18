@@ -1,5 +1,5 @@
 import pyxel
-from functions import in_bounds
+from functions import inBounds
 
 BULLET_WIDTH = 2
 BULLET_HEIGHT = 2
@@ -42,7 +42,7 @@ class Bullet:
             self.u = 40
             self.v = 8
             self.x -= 4
-        if in_bounds(self.x, self.y):
+        if inBounds(self.x, self.y):
             self.isAlive = True
         else:
             self.isAlive = False
