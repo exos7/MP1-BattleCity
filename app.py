@@ -3,7 +3,7 @@ import pyxel
 from player import Player
 from functions import boundingBox, inBounds, atTop, atBottom, atLeft, atRight, boundingBoxCollisionTop, \
 boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight
-from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize, level_1
+from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize, level_1, level_2
 from blocks import Block, Brick, crackedBrick, Water, Forest, Stone
 from bullets import Bullet
 from enemy import Enemy, Blue
@@ -49,7 +49,8 @@ class App:
         self.level = []
         for row in range(0, 17):
             for col in range(0, 17):
-                tile = level_1[row][col]
+                # tile = level_1[row][col]
+                tile = level_2[row][col]
                 #Note that row and col must be rearranged to correct for pyxel's coordinate system
                 b = Block((col+1)*tileSize, (row+1)*tileSize)
                 if tile == 'empty':
