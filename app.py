@@ -3,12 +3,12 @@ import pyxel
 from player import Player
 from functions import boundingBox, inBounds, atTop, atBottom, atLeft, atRight, boundingBoxCollisionTop, \
 boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight
-from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize, level_1, level_2
+from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize
 from blocks import Block, Brick, crackedBrick, Water, Forest, Stone
 from bullets import Bullet
 from enemy import Enemy, Blue
 import random
-
+from tilemap import level_1, level_2
 
 def entityDraw(entities):
     for entity in entities:
