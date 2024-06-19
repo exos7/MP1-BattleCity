@@ -46,6 +46,7 @@ class App:
         pyxel.load('PYXEL_RESOURCE_FILE.pyxres')
         self.player = Player(self.startX, self.startY)
         self.enemy = [Blue(16, 16)]
+        self.enemyNum = 10 #num of enemies needed to be eliminated 
         self.level = []
         
         for row in range(0, 17):
@@ -96,27 +97,27 @@ class App:
         
 
         # movement mechanics neon mains
-        if inBounds(self.player.x, self.player.y):
+        if inBounds(self.player.x, self.player.y) and self.player.isAlive: 
             click = False
             if pyxel.btn(pyxel.KEY_W) and not click:
                 click = True
                 self.player.facing = 0
-                if not atTop(self.player.x, self.player.y) and not any([boundingBoxCollisionBottom(self.player, block) for block in self.level if block.type != 'forest']):
+                if not atTop(self.player.x, self.player.y) and not any([boundingBoxCollisionBottom(self.player, block) for block in self.level if block.type != 'forest']) and not any([boundingBoxCollisionBottom(self.player, enemy) for enemy in self.enemy]):
                     self.player.y -= moveSpeed
             if pyxel.btn(pyxel.KEY_D) and not click:
                 click = True
                 self.player.facing = 1
-                if not atRight(self.player.x, self.player.y) and not any([boundingBoxCollisionLeft(self.player, block) for block in self.level if block.type != 'forest']):
+                if not atRight(self.player.x, self.player.y) and not any([boundingBoxCollisionLeft(self.player, block) for block in self.level if block.type != 'forest']) and not any([boundingBoxCollisionLeft(self.player, enemy) for enemy in self.enemy]):
                     self.player.x += moveSpeed
             if pyxel.btn(pyxel.KEY_S) and not click:
                 click = True
                 self.player.facing = 2
-                if not atBottom(self.player.x, self.player.y) and not any([boundingBoxCollisionTop(self.player, block) for block in self.level if block.type != 'forest']):
+                if not atBottom(self.player.x, self.player.y) and not any([boundingBoxCollisionTop(self.player, block) for block in self.level if block.type != 'forest']) and not any([boundingBoxCollisionTop(self.player, enemy) for enemy in self.enemy]):
                     self.player.y += moveSpeed
             if pyxel.btn(pyxel.KEY_A) and not click:
                 click = True
                 self.player.facing = 3
-                if not atLeft(self.player.x, self.player.y) and not any([boundingBoxCollisionRight(self.player, block) for block in self.level if block.type != 'forest']):
+                if not atLeft(self.player.x, self.player.y) and not any([boundingBoxCollisionRight(self.player, block) for block in self.level if block.type != 'forest']) and not any([boundingBoxCollisionRight(self.player, enemy) for enemy in self.enemy]):
                     self.player.x -= moveSpeed
 
         # enemy movement
@@ -125,16 +126,16 @@ class App:
                 enemy.facing = random.randint(0, 3) 
             Dir = enemy.facing
             if inBounds(enemy.x, enemy.y):
-                if Dir == 0 and not atTop(enemy.x, enemy.y) and not any([boundingBoxCollisionBottom(enemy, block) for block in self.level if block.type != 'forest']):
+                if Dir == 0 and not atTop(enemy.x, enemy.y) and not any([boundingBoxCollisionBottom(enemy, block) for block in self.level if block.type != 'forest']) and not boundingBoxCollisionBottom(enemy, self.player):
                     enemy.y -= moveSpeed
                     enemy.facing = 0
-                if Dir == 1 and not atRight(enemy.x, enemy.y) and not any([boundingBoxCollisionLeft(enemy, block) for block in self.level if block.type != 'forest']):
+                if Dir == 1 and not atRight(enemy.x, enemy.y) and not any([boundingBoxCollisionLeft(enemy, block) for block in self.level if block.type != 'forest']) and not boundingBoxCollisionLeft(enemy, self.player):
                     enemy.x += moveSpeed
                     enemy.facing = 1
-                if Dir == 2 and not atBottom(enemy.x, enemy.y) and not any([boundingBoxCollisionTop(enemy, block) for block in self.level if block.type != 'forest']):
+                if Dir == 2 and not atBottom(enemy.x, enemy.y) and not any([boundingBoxCollisionTop(enemy, block) for block in self.level if block.type != 'forest']) and not boundingBoxCollisionTop(enemy, self.player):
                     enemy.y += moveSpeed
                     enemy.facing = 2
-                if Dir == 3 and not atLeft(enemy.x, enemy.y) and not any([boundingBoxCollisionRight(enemy, block) for block in self.level if block.type != 'forest']):
+                if Dir == 3 and not atLeft(enemy.x, enemy.y) and not any([boundingBoxCollisionRight(enemy, block) for block in self.level if block.type != 'forest']) and not boundingBoxCollisionRight(enemy, self.player):
                     enemy.x -= moveSpeed
                     enemy.facing = 3
             willshoot = random.randint(0, 50)
@@ -149,6 +150,18 @@ class App:
 
             entityUpdate(enemy.bullets)
             for bullet in enemy.bullets:
+
+                #logic for shooting player
+                if boundingBoxCollisionTop(bullet, self.player) or boundingBoxCollisionBottom(bullet, self.player) or \
+                        boundingBoxCollisionRight(bullet, self.player) or boundingBoxCollisionLeft(bullet, self.player):
+                    enemy.isShooting = False
+                    self.player.life -= 1
+                    enemy.bullets.remove(bullet)
+                    print('player was hit')
+                    if self.player.life <= 0:
+                        self.player.isAlive = False
+                        print('player is dead and can no longer move')
+
                 for block in self.level:
                     if block.type == 'brick':
                         if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
@@ -174,15 +187,6 @@ class App:
                     
                     if len(enemy.bullets) == 0:
                         enemy.isShooting = False
-            
-
-            #enemy shooting
-            
-            
-            
-            
-                    
-
 
 
         # player shooting
@@ -199,6 +203,20 @@ class App:
             self.player.isShooting = False
         
         for bullet in self.player.bullets:
+
+            #logic for shooting enemy
+            for enemy in self.enemy:
+                if boundingBoxCollisionTop(bullet, enemy) or boundingBoxCollisionBottom(bullet, enemy) or \
+                    boundingBoxCollisionRight(bullet, enemy) or boundingBoxCollisionLeft(bullet, enemy):
+                    self.player.isShooting = False
+                    self.enemy.remove(enemy)
+                    self.player.bullets.remove(bullet)
+                    if self.enemyNum >= 0:
+                        self.enemyNum -= 1
+                        self.enemy.append(Blue(16, 16))
+                    else:
+                        print('you won!')
+
             for block in self.level:
                 if block.type == 'brick':
                     if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
