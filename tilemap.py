@@ -15,8 +15,8 @@ level_1 = [
     ['empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'brick', 'empty', 'brick', 'empty', 'empty', 'empty', 'forest', 'forest', 'empty', 'empty'], #13
     ['empty', 'stone', 'stone', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'forest', 'forest', 'forest', 'empty'], #14
     ['empty', 'brick', 'brick', 'empty', 'stone', 'stone', 'empty', 'empty', 'empty', 'empty', 'empty', 'water', 'water', 'empty', 'forest', 'forest', 'forest'], #15
-    ['empty', 'brick', 'brick', 'empty', 'brick', 'brick', 'empty', 'empty', 'empty', 'empty', 'empty', 'water', 'water', 'empty', 'forest', 'forest', 'forest'], #16
-    ['empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'water', 'water', 'empty', 'empty', 'forest', 'empty'], #17
+    ['empty', 'brick', 'brick', 'empty', 'brick', 'brick', 'empty', 'brick', 'brick', 'brick', 'empty', 'water', 'water', 'empty', 'forest', 'forest', 'forest'], #16
+    ['empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'brick', 'home', 'brick', 'empty', 'water', 'water', 'empty', 'empty', 'forest', 'empty'], #17
 ]
 
 level_2 = [
@@ -58,5 +58,5 @@ template = [
     ['empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty'], #14
     ['empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty'], #15
     ['empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty'], #16
-    ['empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty'], #17
+    ['empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'home', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty'], #17
 ]

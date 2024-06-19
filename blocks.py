@@ -63,6 +63,7 @@ class Forest(Block):
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 16, 0, self.height, self.width, 0)
+
 class Stone(Block):
     
     def __init__(self, x, y):
@@ -74,3 +75,17 @@ class Stone(Block):
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 0, 0, self.height, self.width)
+
+class Home(Block):
+    
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.health = 20
+        self.type = 'home'
+    
+    def update(self):
+        pass
+
+    def draw(self):
+        # pyxel.blt(self.x, self.y, 0, 0, 16, self.height, self.width)        
+        pyxel.rect(self.x, self.y, 16, 16, 2)

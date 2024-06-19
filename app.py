@@ -4,7 +4,7 @@ from player import Player
 from functions import boundingBox, inBounds, atTop, atBottom, atLeft, atRight, boundingBoxCollisionTop, \
 boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight
 from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize
-from blocks import Block, Brick, crackedBrick, Water, Forest, Stone
+from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home
 from bullets import Bullet
 from enemy import Enemy, Blue
 import random
@@ -42,15 +42,15 @@ class App:
 
 
 
-        self.startX, self.startY = ((pyxel.width - borderLeft - borderRight) // 2) + tileSize // 2, pyxel.height - borderBot - tileSize 
+        self.startX, self.startY = ((pyxel.width - borderLeft - borderRight) // 2) - (3* tileSize) // 2, pyxel.height - borderBot - tileSize
         pyxel.load('PYXEL_RESOURCE_FILE.pyxres')
         self.player = Player(self.startX, self.startY)
-        self.enemy = [Blue(self.startX, self.startY)]
+        self.enemy = [Blue(16, 16)]
         self.level = []
         for row in range(0, 17):
             for col in range(0, 17):
-                # tile = level_1[row][col]
-                tile = level_2[row][col]
+                tile = level_1[row][col]
+                # tile = level_2[row][col]
                 #Note that row and col must be rearranged to correct for pyxel's coordinate system
                 b = Block((col+1)*tileSize, (row+1)*tileSize)
                 if tile == 'empty':
@@ -75,6 +75,9 @@ class App:
                     print(f'forest: {b.x}, {b.y}')
                     self.level.append(Forest(b.x, b.y))
                 
+                elif tile == 'home':
+                    print(f'brick: {b.x}, {b.y}')
+                    self.level.append(Home(b.x, b.y))
         # self.level = [Brick(tileSize * 12, tileSize*4), Stone(tileSize * 13, tileSize*4), \
         # Brick(tileSize*14, tileSize*4), Forest(tileSize*15, tileSize*4), Water(tileSize*16, tileSize*4),]
 
@@ -116,8 +119,9 @@ class App:
 
         # enemy movement
         for enemy in self.enemy:
-            NewDir = random.randint(0, 20) 
-            Dir = NewDir
+            if pyxel.frame_count % 30 == 0:
+                enemy.facing = random.randint(0, 3) 
+            Dir = enemy.facing
             if inBounds(enemy.x, enemy.y):
                 if Dir == 0 and not atTop(enemy.x, enemy.y) and not any([boundingBoxCollisionBottom(enemy, block) for block in self.level if block.type != 'forest']):
                     enemy.y -= moveSpeed
@@ -131,6 +135,50 @@ class App:
                 if Dir == 3 and not atLeft(enemy.x, enemy.y) and not any([boundingBoxCollisionRight(enemy, block) for block in self.level if block.type != 'forest']):
                     enemy.x -= moveSpeed
                     enemy.facing = 3
+
+            #enemy shooting
+            willshoot = random.randint(0, 2)
+            if willshoot == 1 and not enemy.isShooting:
+                enemy.isShooting = True
+                print('shoot')
+                enemy.bullets.append(Bullet(enemy.x, enemy.y, enemy.facing))
+
+                enemy.bullets = [bullet for bullet in enemy.bullets if inBounds(bullet.x, bullet.y)]
+            
+            
+
+            for bullet in enemy.bullets:
+                for block in self.level:
+                    if block.type == 'brick':
+                        if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
+                        boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block):
+                            # self.player.bullets.remove(bullet)
+                            self.enemy.isShooting = False 
+                            if block.type == 'brick':
+                                self.level.remove(block)
+                                self.level.append(crackedBrick(block.x, block.y))
+                                
+                        
+                    elif block.type == 'cracked_brick' or block.type == 'stone' or block.type == 'home':
+                        if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
+                            boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block):
+                            self.enemy.isShooting = False 
+                            if block.type == 'cracked_brick':
+                                block.health -= 10 
+                                if block.health <= 0:
+                                    self.level.remove(block)
+                            elif block.type == 'home':
+                                block.health -= 10
+                                if block.health <= 0:
+                                    self.level.remove(block)
+                                    #add game over screen
+                            if self.enemy.bullets:
+                                self.enemy.bullets.remove(bullet)
+                    
+                    if len(enemy.bullets) == 0:
+                        enemy.isShooting = False
+                    
+
 
 
         # player shooting
@@ -158,7 +206,7 @@ class App:
                             self.level.append(crackedBrick(block.x, block.y))
                             
                        
-                elif block.type == 'cracked_brick' or block.type == 'stone':
+                elif block.type == 'cracked_brick' or block.type == 'stone' or block.type == 'home':
                     if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
                         boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block):
                         self.player.isShooting = False 
@@ -166,6 +214,11 @@ class App:
                             block.health -= 10 
                             if block.health <= 0:
                                 self.level.remove(block)
+                        elif block.type == 'home':
+                            block.health -= 10
+                            if block.health <= 0:
+                                self.level.remove(block)
+                                #add game over screen
                         if self.player.bullets:
                             self.player.bullets.remove(bullet)
 
@@ -191,5 +244,7 @@ class App:
 
         levelDraw(self.level)
         entityDraw(self.player.bullets)
+        for enemy in self.enemy:
+            entityDraw(enemy.bullets)
         forestDraw(self.level)
 App()
