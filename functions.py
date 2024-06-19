@@ -33,6 +33,8 @@ def isColliding(entity1, entity2):
     return False
 
 def boundingBox(entity):
+    if entity.width == 1 and entity.height == 1:
+        return (entity.x, entity.y, entity.x, entity.y)
     return (entity.x, entity.y, entity.x + entity.width, entity.y + entity.height)
 
 def boundingBoxCollisionTop(entity1, entity2):

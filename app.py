@@ -6,6 +6,8 @@ boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight
 from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize, level_1
 from blocks import Block, Brick, crackedBrick, Water, Forest, Stone
 from bullets import Bullet
+from enemy import Enemy, Blue
+import random
 
 
 def entityDraw(entities):
@@ -19,6 +21,11 @@ def entityUpdate(entities):
 def levelDraw(level):
     for block in level:
         block.draw()
+
+def forestDraw(level):
+    for block in level:
+        if block.type == 'forest':
+            block.draw()
 
 class App:
     def __init__(self):
@@ -38,6 +45,7 @@ class App:
         self.startX, self.startY = ((pyxel.width - borderLeft - borderRight) // 2) + tileSize // 2, pyxel.height - borderBot - tileSize 
         pyxel.load('PYXEL_RESOURCE_FILE.pyxres')
         self.player = Player(self.startX, self.startY)
+        self.enemy = [Blue(self.startX, self.startY)]
         self.level = []
         for row in range(0, 17):
             for col in range(0, 17):
@@ -105,9 +113,27 @@ class App:
                 if not atLeft(self.player.x, self.player.y) and not any([boundingBoxCollisionRight(self.player, block) for block in self.level if block.type != 'forest']):
                     self.player.x -= moveSpeed
 
+        # enemy movement
+        for enemy in self.enemy:
+            NewDir = random.randint(0, 20) 
+            Dir = NewDir
+            if inBounds(enemy.x, enemy.y):
+                if Dir == 0 and not atTop(enemy.x, enemy.y) and not any([boundingBoxCollisionBottom(enemy, block) for block in self.level if block.type != 'forest']):
+                    enemy.y -= moveSpeed
+                    enemy.facing = 0
+                if Dir == 1 and not atRight(enemy.x, enemy.y) and not any([boundingBoxCollisionLeft(enemy, block) for block in self.level if block.type != 'forest']):
+                    enemy.x += moveSpeed
+                    enemy.facing = 1
+                if Dir == 2 and not atBottom(enemy.x, enemy.y) and not any([boundingBoxCollisionTop(enemy, block) for block in self.level if block.type != 'forest']):
+                    enemy.y += moveSpeed
+                    enemy.facing = 2
+                if Dir == 3 and not atLeft(enemy.x, enemy.y) and not any([boundingBoxCollisionRight(enemy, block) for block in self.level if block.type != 'forest']):
+                    enemy.x -= moveSpeed
+                    enemy.facing = 3
+
 
         # player shooting
-        if pyxel.btnp(pyxel.KEY_SPACE) and not self.player.isShooting:
+        if pyxel.btn(pyxel.KEY_SPACE) and not self.player.isShooting:
             self.player.isShooting = True
             self.player.bullets.append(Bullet(self.player.x, self.player.y, self.player.facing))
 
@@ -135,15 +161,24 @@ class App:
                     if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
                         boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block):
                         self.player.isShooting = False 
-                        block.health -= 10
-                        if block.health <= 0:
-                            self.level.remove(block)
-                        self.player.bullets.remove(bullet)
+                        if block.type == 'cracked_brick':
+                            block.health -= 10 
+                            if block.health <= 0:
+                                self.level.remove(block)
+                        if self.player.bullets:
+                            self.player.bullets.remove(bullet)
+
+            
+            
+            
+
+
 
         
     def draw(self):
-        
         self.player.draw()
+        entityDraw(self.enemy)
+        entityUpdate(self.enemy)
         #left border
         pyxel.rect(0, 0, borderLeft, pyxel.height, 13)
         #right border
@@ -155,4 +190,5 @@ class App:
 
         levelDraw(self.level)
         entityDraw(self.player.bullets)
+        forestDraw(self.level)
 App()

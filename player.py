@@ -1,5 +1,4 @@
 import pyxel
-from functions import boundingBox
 
 class Player:
 
@@ -27,4 +26,4 @@ class Player:
 
     def draw(self):
         pyxel.cls(0)
-        pyxel.blt(self.x, self.y, 1, self.u, self.v, 16, 16)
+        pyxel.blt(self.x, self.y, 1, self.u, self.v, 16, 16, 0)
