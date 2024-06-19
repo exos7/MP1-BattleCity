@@ -87,5 +87,4 @@ class Home(Block):
         pass
 
     def draw(self):
-        # pyxel.blt(self.x, self.y, 0, 0, 16, self.height, self.width)        
-        pyxel.rect(self.x, self.y, 16, 16, 2)
+        pyxel.blt(self.x, self.y, 0, 0, 48, self.height, self.width, 0)

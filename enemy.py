@@ -28,9 +28,10 @@ class Blue(Enemy):
         self.u, self.v = 0, 0
         self.health = 20
         self.type = 'blue'
+        self.isShooting = False
     
     def update(self):
-    
+        
         if self.facing == 0:
             self.u, self.v = 0, 0
         elif self.facing == 1:

@@ -47,6 +47,7 @@ class App:
         self.player = Player(self.startX, self.startY)
         self.enemy = [Blue(16, 16)]
         self.level = []
+        
         for row in range(0, 17):
             for col in range(0, 17):
                 tile = level_1[row][col]
@@ -92,6 +93,7 @@ class App:
         self.player.update()
         entityUpdate(self.player.bullets)
         entityUpdate(self.level)
+        
 
         # movement mechanics neon mains
         if inBounds(self.player.x, self.player.y):
@@ -135,34 +137,31 @@ class App:
                 if Dir == 3 and not atLeft(enemy.x, enemy.y) and not any([boundingBoxCollisionRight(enemy, block) for block in self.level if block.type != 'forest']):
                     enemy.x -= moveSpeed
                     enemy.facing = 3
-
-            #enemy shooting
-            willshoot = random.randint(0, 2)
+            willshoot = random.randint(0, 50)
             if willshoot == 1 and not enemy.isShooting:
                 enemy.isShooting = True
                 print('shoot')
                 enemy.bullets.append(Bullet(enemy.x, enemy.y, enemy.facing))
 
-                enemy.bullets = [bullet for bullet in enemy.bullets if inBounds(bullet.x, bullet.y)]
-            
-            
+            enemy.bullets = [bullet for bullet in enemy.bullets if inBounds(bullet.x, bullet.y)]
+            if len(enemy.bullets) == 0:
+                enemy.isShooting = False
 
+            entityUpdate(enemy.bullets)
             for bullet in enemy.bullets:
                 for block in self.level:
                     if block.type == 'brick':
                         if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
                         boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block):
-                            # self.player.bullets.remove(bullet)
-                            self.enemy.isShooting = False 
-                            if block.type == 'brick':
-                                self.level.remove(block)
-                                self.level.append(crackedBrick(block.x, block.y))
+                            enemy.isShooting = False
+                            self.level.remove(block)
+                            self.level.append(crackedBrick(block.x, block.y))
                                 
                         
                     elif block.type == 'cracked_brick' or block.type == 'stone' or block.type == 'home':
                         if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
                             boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block):
-                            self.enemy.isShooting = False 
+                            enemy.bullets.remove(bullet)
                             if block.type == 'cracked_brick':
                                 block.health -= 10 
                                 if block.health <= 0:
@@ -172,11 +171,16 @@ class App:
                                 if block.health <= 0:
                                     self.level.remove(block)
                                     #add game over screen
-                            if self.enemy.bullets:
-                                self.enemy.bullets.remove(bullet)
                     
                     if len(enemy.bullets) == 0:
                         enemy.isShooting = False
+            
+
+            #enemy shooting
+            
+            
+            
+            
                     
 
 
@@ -246,5 +250,7 @@ class App:
         entityDraw(self.player.bullets)
         for enemy in self.enemy:
             entityDraw(enemy.bullets)
-        forestDraw(self.level)
+            forestDraw(self.level)
+            
+        
 App()
