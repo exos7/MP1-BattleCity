@@ -45,7 +45,7 @@ class App:
         self.startX, self.startY = ((pyxel.width - borderLeft - borderRight) // 2) - (3* tileSize) // 2, pyxel.height - borderBot - tileSize
         pyxel.load('PYXEL_RESOURCE_FILE.pyxres')
         self.player = Player(self.startX, self.startY)
-        self.enemy = [Blue(16, 16)]
+        self.enemies = [Blue(16, 16), Blue(16, 272), Blue(272, 16), Blue(272, 272)]
         self.level = []
         
         for row in range(0, 17):
@@ -120,7 +120,7 @@ class App:
                     self.player.x -= moveSpeed
 
         # enemy movement
-        for enemy in self.enemy:
+        for enemy in self.enemies:
             if pyxel.frame_count % 30 == 0:
                 enemy.facing = random.randint(0, 3) 
             Dir = enemy.facing
@@ -178,12 +178,6 @@ class App:
 
             #enemy shooting
             
-            
-            
-            
-                    
-
-
 
         # player shooting
         if pyxel.btnp(pyxel.KEY_SPACE,15,20) and not self.player.isShooting:
@@ -235,8 +229,8 @@ class App:
         
     def draw(self):
         self.player.draw()
-        entityDraw(self.enemy)
-        entityUpdate(self.enemy)
+        entityDraw(self.enemies)
+        entityUpdate(self.enemies)
         #left border
         pyxel.rect(0, 0, borderLeft, pyxel.height, 13)
         #right border
@@ -248,7 +242,7 @@ class App:
 
         levelDraw(self.level)
         entityDraw(self.player.bullets)
-        for enemy in self.enemy:
+        for enemy in self.enemies:
             entityDraw(enemy.bullets)
             forestDraw(self.level)
             
