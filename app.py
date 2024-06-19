@@ -133,7 +133,7 @@ class App:
 
 
         # player shooting
-        if pyxel.btn(pyxel.KEY_SPACE) and not self.player.isShooting:
+        if pyxel.btnp(pyxel.KEY_SPACE,15,20) and not self.player.isShooting:
             self.player.isShooting = True
             self.player.bullets.append(Bullet(self.player.x, self.player.y, self.player.facing))
 
