@@ -88,3 +88,23 @@ class Home(Block):
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, 0, 48, self.height, self.width, 0)
+
+class Mirror(Block):
+
+    def __init__(self, x, y, orientation):
+        super().__init__(x, y)
+        self.type = 'mirror'
+        self.orientation = orientation # 0 = positive slope, 1 = negative slope
+        self.pixels = []
+        if self.orientation == 0:
+            self.u = 0
+            self.v = 64
+        if self.orientation == 1:
+            self.u = 16
+            self.v = 64
+
+    def update(self):
+        pass
+
+    def draw(self):
+        pyxel.blt(self.x, self.y, 0, self.u, self.v, self.height, self.width, 0)
