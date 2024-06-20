@@ -9,6 +9,7 @@ from bullets import Bullet
 from enemy import Enemy, Blue
 import random
 from tilemap import level_1, level_2
+from level import Screen
 
 def entityDraw(entities):
     for entity in entities:
@@ -45,12 +46,12 @@ class App:
         self.startX, self.startY = ((pyxel.width - borderLeft - borderRight) // 2) - (3* tileSize) // 2, pyxel.height - borderBot - tileSize
         pyxel.load('PYXEL_RESOURCE_FILE.pyxres')
         self.player = Player(self.startX, self.startY)
-
         self.enemies = [Blue(16, 16)]
-        self.enemyNum = 10 #num of enemies needed to be eliminated 
-
-      
-
+        self.enemyNum = 1 #num of enemies needed to be eliminated 
+        self.done = False
+        self.screen = []
+        
+        self.levelNum = 1
         self.level = []
         
         for row in range(0, 17):
@@ -109,7 +110,7 @@ class App:
         
 
         # movement mechanics neon mains
-        if inBounds(self.player.x, self.player.y) and self.player.isAlive: 
+        if inBounds(self.player.x, self.player.y) and self.player.isAlive and self.player.canMove: 
             click = False
             if pyxel.btn(pyxel.KEY_W) and not click:
                 click = True
@@ -195,6 +196,7 @@ class App:
                                 block.health -= 10
                                 if block.health <= 0:
                                     self.level.remove(block)
+                                    print('player is dead and can no longer move')
                                     #add game over screen
                     
                     if len(enemy.bullets) == 0:
@@ -202,7 +204,7 @@ class App:
 
 
         # player shooting
-        if pyxel.btnp(pyxel.KEY_SPACE,15,20) and not self.player.isShooting:
+        if pyxel.btnp(pyxel.KEY_SPACE,15,20) and not self.player.isShooting and self.player.canMove:
             self.player.isShooting = True
             self.player.bullets.append(Bullet(self.player.x, self.player.y, self.player.facing))
 
@@ -228,6 +230,15 @@ class App:
                         self.enemies.append(Blue(16, 16))
                     else:
                         print('you won!')
+                        #function for win screen! 
+                        self.level.clear()
+                        self.levelNum += 1
+                        self.screen.append(Screen(36+borderLeft, 36+borderTop))
+                        self.player.canMove = False
+                        #turn this into a function ? 
+        
+
+                        
 
             for block in self.level:
                 if block.type == 'brick':
@@ -278,11 +289,63 @@ class App:
                                 bullet.facing = 0
 
 
+        if pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum == 2:
+            self.player.canMove = True
+            self.enemies = [Blue(16, 16)]
+            self.enemyNum = 1
+            print('working')
+            self.screen = []
+            self.player.x, self.player.y = self.startX, self.startY
+            for row in range(0, 17):
+                for col in range(0, 17):
+                    # tile = level_1[row][col]
+                    tile = level_2[row][col]
+                    #Note that row and col must be rearranged to correct for pyxel's coordinate system
+                    b = Block((col+1)*tileSize, (row+1)*tileSize)
+                    if tile == 'empty':
+                        pass
+                    elif tile == 'brick':
+                        print(f'brick: {b.x}, {b.y}')
+                        self.level.append(Brick(b.x, b.y))
 
+                    elif tile == 'cracked_brick':
+                        print(f'cracked_brick: {b.x}, {b.y}')
+                        self.level.append(crackedBrick(b.x, b.y))
+
+                    elif tile == 'stone':
+                        print(f'stone: {b.x}, {b.y}')
+                        self.level.append(Stone(b.x, b.y))
+
+                    elif tile == 'water':
+                        print(f'water: {b.x}, {b.y}')
+                        self.level.append(Water(b.x, b.y))
+
+                    elif tile == 'forest':
+                        print(f'forest: {b.x}, {b.y}')
+                        self.level.append(Forest(b.x, b.y))
+                    
+                    elif tile == 'home':
+                        print(f'brick: {b.x}, {b.y}')
+                        self.level.append(Home(b.x, b.y))
+
+                    elif tile == 'mirrorPos':
+                        print(f'mirrorPos: {b.x}, {b.y}')
+                        self.level.append(Mirror(b.x, b.y, 0))
+                    
+                    elif tile == 'mirrorNeg':
+                        print(f'mirrorNeg: {b.x}, {b.y}')
+                        self.level.append(Mirror(b.x, b.y, 1))
+
+        elif pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum > 2:
+            self.screen = []
+            self.done = True
+            print('you won!')
+            
 
         
     def draw(self):
-        self.player.draw()
+        if not self.done:
+            self.player.draw()
         entityDraw(self.enemies)
         entityUpdate(self.enemies)
         #left border
@@ -293,9 +356,9 @@ class App:
         pyxel.rect(0, 0, pyxel.width, borderTop, 13)
         #bottom border
         pyxel.rect(0, pyxel.height - borderBot, pyxel.width, borderBot, 13)
-
         levelDraw(self.level)
         entityDraw(self.player.bullets)
+        entityDraw(self.screen)
         for enemy in self.enemies:
             entityDraw(enemy.bullets)
             forestDraw(self.level)

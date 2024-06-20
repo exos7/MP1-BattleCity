@@ -8,6 +8,7 @@ class Player:
         self.u, self.v = 0, 0
         self.life = 3
         self.isAlive = True
+        self.canMove = True
         self.facing = 0
         self.isShooting = False
         self.width = 16
