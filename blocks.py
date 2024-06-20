@@ -101,6 +101,7 @@ class Mirror(Block):
         self.orientation = orientation # 0 = positive slope, 1 = negative slope
         self.pixels = []
         if self.orientation == 0:
+            self.pixels = [(self.x, self.y + self.width + i) for i in range(self.height)]
             self.u = 0
             self.v = 64
         if self.orientation == 1:
