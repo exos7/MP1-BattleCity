@@ -114,3 +114,24 @@ class Mirror(Block):
 
     def draw(self):
         pyxel.blt(self.x, self.y, 0, self.u, self.v, self.height, self.width, 0)
+
+class enemySpawn(Block):
+
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.type = 'enemySpawn'
+        self.u = 0
+        self.v = 16
+
+    def update(self):
+        if pyxel.frame_count % 60 == 0:
+            self.u, self.v = 0, 16
+        elif pyxel.frame_count % 30 == 0:
+            self.u, self.v = 16, 16
+        elif pyxel.frame_count % 15 == 0:
+            self.u, self.v = 32, 16
+        elif pyxel.frame_count % 5 == 0:
+            self.u, self.v = 48, 16
+
+    def draw(self):
+        pyxel.blt(self.x, self.y, 2, self.u, self.v, self.height, self.width, 0)
