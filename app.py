@@ -168,7 +168,7 @@ class App:
                 if boundingBoxCollisionTop(bullet, self.player) or boundingBoxCollisionBottom(bullet, self.player) or \
                         boundingBoxCollisionRight(bullet, self.player) or boundingBoxCollisionLeft(bullet, self.player):
                     enemy.isShooting = False
-                    self.player.life -= 1
+                    self.player.lives -= 1
                     enemy.bullets.remove(bullet)
                     print('player was hit')
                     if self.player.life <= 0:
@@ -197,11 +197,10 @@ class App:
                             elif block.type == 'home':
                                 block.health -= 10
                                 if block.health <= 0:
-                                    self.level.remove(block)
                                     print('player is dead and can no longer move')
                                     s = Screen(36+borderLeft, 36+borderTop)
                                     self.screen.append(gameOver(s.x, s.y))
-                                    self.player.isAlive == False
+                                    self.player.isAlive = False
                                     #add game over screen
                                     #funtionify initialization HASHFHADJKFALDSJHF
                     
@@ -271,11 +270,10 @@ class App:
                         elif block.type == 'home':
                             block.health -= 10
                             if block.health <= 0:
-                                self.level.remove(block)
                                 print('player is dead and can no longer move')
                                 s = Screen(36+borderLeft, 36+borderTop)
                                 self.screen.append(gameOver(s.x, s.y))
-                                self.player.isAlive == False
+                                self.player.isAlive = False
                                 #add game over screen
                         if self.player.bullets:
                             self.player.bullets.remove(bullet)
@@ -362,6 +360,7 @@ class App:
     def draw(self):
         if not self.done:
             self.player.draw()
+            
             entityDraw(self.enemies)
             entityUpdate(self.enemies)
             #left border
@@ -372,6 +371,7 @@ class App:
             pyxel.rect(0, 0, pyxel.width, borderTop, 13)
             #bottom border
             pyxel.rect(0, pyxel.height - borderBot, pyxel.width, borderBot, 13)
+            pyxel.text(borderLeft, pyxel.height - borderBot, f'Life: {self.player.lives}', 0)
             levelDraw(self.level)
             entityDraw(self.player.bullets)
             entityDraw(self.screen)
