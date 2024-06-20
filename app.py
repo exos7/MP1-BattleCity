@@ -9,7 +9,7 @@ from bullets import Bullet
 from enemy import Enemy, Blue
 import random
 from tilemap import level_1, level_2
-from level import Screen
+from level import Screen, nextLevel, Win, gameOver
 
 def entityDraw(entities):
     for entity in entities:
@@ -174,6 +174,8 @@ class App:
                     if self.player.life <= 0:
                         self.player.isAlive = False
                         print('player is dead and can no longer move')
+                        s = Screen(36+borderLeft, 36+borderTop)
+                        self.screen.append(gameOver(s.x, s.y))
 
                 for block in self.level:
                     if block.type == 'brick':
@@ -197,7 +199,11 @@ class App:
                                 if block.health <= 0:
                                     self.level.remove(block)
                                     print('player is dead and can no longer move')
+                                    s = Screen(36+borderLeft, 36+borderTop)
+                                    self.screen.append(gameOver(s.x, s.y))
+                                    self.player.isAlive == False
                                     #add game over screen
+                                    #funtionify initialization HASHFHADJKFALDSJHF
                     
                     if len(enemy.bullets) == 0:
                         enemy.isShooting = False
@@ -209,8 +215,7 @@ class App:
             self.player.bullets.append(Bullet(self.player.x, self.player.y, self.player.facing))
 
 
-        # bullet collision
-
+        # bullet collision 
         self.player.bullets = [bullet for bullet in self.player.bullets if inBounds(bullet.x, bullet.y)]
         
         if len(self.player.bullets) == 0:
@@ -233,7 +238,11 @@ class App:
                         #function for win screen! 
                         self.level.clear()
                         self.levelNum += 1
-                        self.screen.append(Screen(36+borderLeft, 36+borderTop))
+                        s = Screen(36+borderLeft, 36+borderTop)
+                        if self.levelNum <= 2:
+                            self.screen.append(nextLevel(s.x, s.y))
+                        else:
+                            self.screen.append(Win(s.x, s.y))
                         self.player.canMove = False
                         #turn this into a function ? 
         
@@ -263,6 +272,10 @@ class App:
                             block.health -= 10
                             if block.health <= 0:
                                 self.level.remove(block)
+                                print('player is dead and can no longer move')
+                                s = Screen(36+borderLeft, 36+borderTop)
+                                self.screen.append(gameOver(s.x, s.y))
+                                self.player.isAlive == False
                                 #add game over screen
                         if self.player.bullets:
                             self.player.bullets.remove(bullet)
@@ -290,6 +303,7 @@ class App:
 
 
         if pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum == 2:
+            self.player.facing = 0
             self.player.canMove = True
             self.enemies = [Blue(16, 16)]
             self.enemyNum = 1
@@ -337,31 +351,35 @@ class App:
                         self.level.append(Mirror(b.x, b.y, 1))
 
         elif pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum > 2:
-            self.screen = []
-            self.done = True
-            print('you won!')
+            #consider making initial screen
+            quit()
+
+        elif pyxel.btnp(pyxel.KEY_SPACE) and self.player.isAlive == False:
+            quit() 
             
 
         
     def draw(self):
         if not self.done:
             self.player.draw()
-        entityDraw(self.enemies)
-        entityUpdate(self.enemies)
-        #left border
-        pyxel.rect(0, 0, borderLeft, pyxel.height, 13)
-        #right border
-        pyxel.rect(pyxel.width - borderRight, 0, borderRight, pyxel.height, 13)
-        #top border
-        pyxel.rect(0, 0, pyxel.width, borderTop, 13)
-        #bottom border
-        pyxel.rect(0, pyxel.height - borderBot, pyxel.width, borderBot, 13)
-        levelDraw(self.level)
-        entityDraw(self.player.bullets)
-        entityDraw(self.screen)
-        for enemy in self.enemies:
-            entityDraw(enemy.bullets)
-            forestDraw(self.level)
-            
+            entityDraw(self.enemies)
+            entityUpdate(self.enemies)
+            #left border
+            pyxel.rect(0, 0, borderLeft, pyxel.height, 13)
+            #right border
+            pyxel.rect(pyxel.width - borderRight, 0, borderRight, pyxel.height, 13)
+            #top border
+            pyxel.rect(0, 0, pyxel.width, borderTop, 13)
+            #bottom border
+            pyxel.rect(0, pyxel.height - borderBot, pyxel.width, borderBot, 13)
+            levelDraw(self.level)
+            entityDraw(self.player.bullets)
+            entityDraw(self.screen)
+            for enemy in self.enemies:
+                entityDraw(enemy.bullets)
+                forestDraw(self.level)
+        else:
+            #consider making intial screen
+            pass
         
 App()
