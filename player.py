@@ -6,6 +6,7 @@ class Player:
         self.x = x
         self.y = y
         self.u, self.v = 0, 0
+        self.life = 3
         self.isAlive = True
         self.facing = 0
         self.isShooting = False
