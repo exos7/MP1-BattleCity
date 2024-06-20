@@ -100,6 +100,7 @@ class Mirror(Block):
         self.type = 'mirror'
         self.orientation = orientation # 0 = positive slope, 1 = negative slope
         self.pixels = []
+        self.bulletsCollided = []
         if self.orientation == 0:
             self.pixels = [(self.x, self.y + self.width + i) for i in range(self.height)]
             self.u = 0

@@ -27,7 +27,7 @@ def inBounds(x, y):
     return False
 
 def isColliding(entity1, entity2):
-    if (entity1.x <= entity2.x <= entity1.x+16) and (entity1.y <= entity2.y <= entity1.y + 16):
+    if (entity1.x <= entity2.x <= entity1.x+4) and (entity1.y <= entity2.y <= entity1.y + 4):
         return True
 
     return False
@@ -64,3 +64,32 @@ def boundingBoxCollisionRight(entity1, entity2):
     if (x1 - moveSpeed < x4 and x2 > x3) and (y1 < y4 and y2 > y3):
         return True
     return False
+
+
+# def boundingBoxCollisionTopMirror(entity1, entity2):
+#     x1, y1 = entity1.x, entity1.y
+#     x3, y3, x4, y4 = boundingBox(entity2)
+#     if (x1 < x4 and x2 > x3) and (y1 < y4 and (y2 + moveSpeed) > y3):
+#         return True
+#     return False
+
+# def boundingBoxCollisionBottomMirror(entity1, entity2):
+#     x1, y1 = entity1.x, entity1.y
+#     x3, y3, x4, y4 = boundingBox(entity2)
+#     if (x1 < x4 and x2 > x3) and (y1 - moveSpeed < y4 and y2 > y3):
+#         return True
+#     return False
+    
+# def boundingBoxCollisionLeftMirror(entity1, entity2):
+#     x1, y1 = entity1.x, entity1.y
+#     x3, y3, x4, y4 = boundingBox(entity2)
+#     if (x1 < x4 and x2 + moveSpeed > x3) and (y1 < y4 and y2 > y3):
+#         return True
+#     return False
+
+# def boundingBoxCollisionRightMirror(entity1, entity2):
+#     x1, y1 = entity1.x, entity1.y
+#     x3, y3, x4, y4 = boundingBox(entity2)
+#     if (x1 - moveSpeed < x4 and x2 > x3) and (y1 < y4 and y2 > y3):
+#         return True
+#     return False
