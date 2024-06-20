@@ -14,7 +14,7 @@ class Player:
         self.width = 16
         self.height = 16
         self.bullets = []
-        self.health = 3
+        self.lives = 3
         
     
     def update(self):

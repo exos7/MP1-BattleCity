@@ -82,12 +82,16 @@ class Home(Block):
         super().__init__(x, y)
         self.health = 20
         self.type = 'home'
+        self.u = 0
+        self.v = 48
     
     def update(self):
-        pass
+        if self.health == 0:
+            self.u = 16
+            self.v = 48
 
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 0, 48, self.height, self.width, 0)
+        pyxel.blt(self.x, self.y, 0, self.u, self.v, self.height, self.width, 0)
 
 class Mirror(Block):
 
