@@ -2,9 +2,9 @@ from re import I
 import pyxel
 from player import Player
 from functions import boundingBox, inBounds, atTop, atBottom, atLeft, atRight, boundingBoxCollisionTop, \
-boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight
+boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight, isSeparated
 from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize
-from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home
+from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home, Mirror
 from bullets import Bullet
 from enemy import Enemy, Blue
 import random
@@ -46,7 +46,7 @@ class App:
         pyxel.load('PYXEL_RESOURCE_FILE.pyxres')
         self.player = Player(self.startX, self.startY)
 
-        self.enemy = [Blue(16, 16)]
+        self.enemies = [Blue(16, 16)]
         self.enemyNum = 10 #num of enemies needed to be eliminated 
 
       
@@ -84,6 +84,14 @@ class App:
                 elif tile == 'home':
                     print(f'brick: {b.x}, {b.y}')
                     self.level.append(Home(b.x, b.y))
+
+                elif tile == 'mirrorPos':
+                    print(f'mirrorPos: {b.x}, {b.y}')
+                    self.level.append(Mirror(b.x, b.y, 0))
+                
+                elif tile == 'mirrorNeg':
+                    print(f'mirrorNeg: {b.x}, {b.y}')
+                    self.level.append(Mirror(b.x, b.y, 1))
         # self.level = [Brick(tileSize * 12, tileSize*4), Stone(tileSize * 13, tileSize*4), \
         # Brick(tileSize*14, tileSize*4), Forest(tileSize*15, tileSize*4), Water(tileSize*16, tileSize*4),]
 
@@ -106,22 +114,22 @@ class App:
             if pyxel.btn(pyxel.KEY_W) and not click:
                 click = True
                 self.player.facing = 0
-                if not atTop(self.player.x, self.player.y) and not any([boundingBoxCollisionBottom(self.player, block) for block in self.level if block.type != 'forest']) and not any([boundingBoxCollisionBottom(self.player, enemy) for enemy in self.enemy]):
+                if not atTop(self.player.x, self.player.y) and not any([boundingBoxCollisionBottom(self.player, block) for block in self.level if block.type != 'forest']) and not any([boundingBoxCollisionBottom(self.player, enemy) for enemy in self.enemies]):
                     self.player.y -= moveSpeed
             if pyxel.btn(pyxel.KEY_D) and not click:
                 click = True
                 self.player.facing = 1
-                if not atRight(self.player.x, self.player.y) and not any([boundingBoxCollisionLeft(self.player, block) for block in self.level if block.type != 'forest']) and not any([boundingBoxCollisionLeft(self.player, enemy) for enemy in self.enemy]):
+                if not atRight(self.player.x, self.player.y) and not any([boundingBoxCollisionLeft(self.player, block) for block in self.level if block.type != 'forest']) and not any([boundingBoxCollisionLeft(self.player, enemy) for enemy in self.enemies]):
                     self.player.x += moveSpeed
             if pyxel.btn(pyxel.KEY_S) and not click:
                 click = True
                 self.player.facing = 2
-                if not atBottom(self.player.x, self.player.y) and not any([boundingBoxCollisionTop(self.player, block) for block in self.level if block.type != 'forest']) and not any([boundingBoxCollisionTop(self.player, enemy) for enemy in self.enemy]):
+                if not atBottom(self.player.x, self.player.y) and not any([boundingBoxCollisionTop(self.player, block) for block in self.level if block.type != 'forest']) and not any([boundingBoxCollisionTop(self.player, enemy) for enemy in self.enemies]):
                     self.player.y += moveSpeed
             if pyxel.btn(pyxel.KEY_A) and not click:
                 click = True
                 self.player.facing = 3
-                if not atLeft(self.player.x, self.player.y) and not any([boundingBoxCollisionRight(self.player, block) for block in self.level if block.type != 'forest']) and not any([boundingBoxCollisionRight(self.player, enemy) for enemy in self.enemy]):
+                if not atLeft(self.player.x, self.player.y) and not any([boundingBoxCollisionRight(self.player, block) for block in self.level if block.type != 'forest']) and not any([boundingBoxCollisionRight(self.player, enemy) for enemy in self.enemies]):
                     self.player.x -= moveSpeed
 
         # enemy movement
@@ -209,15 +217,15 @@ class App:
         for bullet in self.player.bullets:
 
             #logic for shooting enemy
-            for enemy in self.enemy:
+            for enemy in self.enemies:
                 if boundingBoxCollisionTop(bullet, enemy) or boundingBoxCollisionBottom(bullet, enemy) or \
                     boundingBoxCollisionRight(bullet, enemy) or boundingBoxCollisionLeft(bullet, enemy):
                     self.player.isShooting = False
-                    self.enemy.remove(enemy)
+                    self.enemies.remove(enemy)
                     self.player.bullets.remove(bullet)
                     if self.enemyNum >= 0:
                         self.enemyNum -= 1
-                        self.enemy.append(Blue(16, 16))
+                        self.enemies.append(Blue(16, 16))
                     else:
                         print('you won!')
 
@@ -247,10 +255,28 @@ class App:
                                 #add game over screen
                         if self.player.bullets:
                             self.player.bullets.remove(bullet)
+                
+                elif block.type == 'mirror':
+                    if not isSeparated(bullet, block):
+                        if block.orientation == 0:
+                            if bullet.facing == 0:
+                                bullet.facing = 1
+                            elif bullet.facing == 1:
+                                bullet.facing = 0
+                            elif bullet.facing == 2:
+                                bullet.facing = 3
+                            elif bullet.facing == 3:
+                                bullet.facing = 2
+                        if block.orientation == 1:
+                            if bullet.facing == 0:
+                                bullet.facing = 3
+                            elif bullet.facing == 1:
+                                bullet.facing = 2
+                            elif bullet.facing == 2:
+                                bullet.facing = 1
+                            elif bullet.facing == 3:
+                                bullet.facing = 0
 
-            
-            
-            
 
 
 
