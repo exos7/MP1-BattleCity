@@ -2,7 +2,7 @@ from re import I
 import pyxel
 from player import Player
 from functions import boundingBox, inBounds, atTop, atBottom, atLeft, atRight, boundingBoxCollisionTop, \
-boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight, isSeparated
+boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight
 from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize
 from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home, Mirror
 from bullets import Bullet
@@ -279,25 +279,24 @@ class App:
                             self.player.bullets.remove(bullet)
                 
                 elif block.type == 'mirror':
-                    if not isSeparated(bullet, block):
-                        if block.orientation == 0:
-                            if bullet.facing == 0:
-                                bullet.facing = 1
-                            elif bullet.facing == 1:
-                                bullet.facing = 0
-                            elif bullet.facing == 2:
-                                bullet.facing = 3
-                            elif bullet.facing == 3:
-                                bullet.facing = 2
-                        if block.orientation == 1:
-                            if bullet.facing == 0:
-                                bullet.facing = 3
-                            elif bullet.facing == 1:
-                                bullet.facing = 2
-                            elif bullet.facing == 2:
-                                bullet.facing = 1
-                            elif bullet.facing == 3:
-                                bullet.facing = 0
+                    if block.orientation == 0:
+                        if bullet.facing == 0:
+                            bullet.facing = 1
+                        elif bullet.facing == 1:
+                            bullet.facing = 0
+                        elif bullet.facing == 2:
+                            bullet.facing = 3
+                        elif bullet.facing == 3:
+                            bullet.facing = 2
+                    if block.orientation == 1:
+                        if bullet.facing == 0:
+                            bullet.facing = 3
+                        elif bullet.facing == 1:
+                            bullet.facing = 2
+                        elif bullet.facing == 2:
+                            bullet.facing = 1
+                        elif bullet.facing == 3:
+                            bullet.facing = 0
 
 
         if pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum == 2:

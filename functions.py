@@ -64,10 +64,3 @@ def boundingBoxCollisionRight(entity1, entity2):
     if (x1 - moveSpeed < x4 and x2 > x3) and (y1 < y4 and y2 > y3):
         return True
     return False
-
-def mirrorBlockCollision(bullet, mirror):
-    x, y = bullet.x, bullet.y
-
-    if bullet.facing == 1:
-    
-    
