@@ -174,8 +174,11 @@ class App:
                     if self.player.life <= 0:
                         self.player.isAlive = False
                         print('player is dead and can no longer move')
+                        self.level.clear()
+                        self.enemies.clear()
                         s = Screen(36+borderLeft, 36+borderTop)
                         self.screen.append(gameOver(s.x, s.y))
+                        
 
                 for block in self.level:
                     if block.type == 'brick':
@@ -198,6 +201,8 @@ class App:
                                 block.health -= 10
                                 if block.health <= 0:
                                     print('player is dead and can no longer move')
+                                    self.level.clear()
+                                    self.enemies.clear()
                                     s = Screen(36+borderLeft, 36+borderTop)
                                     self.screen.append(gameOver(s.x, s.y))
                                     self.player.isAlive = False
@@ -273,30 +278,35 @@ class App:
                                 print('player is dead and can no longer move')
                                 s = Screen(36+borderLeft, 36+borderTop)
                                 self.screen.append(gameOver(s.x, s.y))
+                                self.level.clear()
+                                self.enemies.clear()
                                 self.player.isAlive = False
                                 #add game over screen
                         if self.player.bullets:
                             self.player.bullets.remove(bullet)
                 
                 elif block.type == 'mirror':
-                    if block.orientation == 0:
-                        if bullet.facing == 0:
-                            bullet.facing = 1
-                        elif bullet.facing == 1:
-                            bullet.facing = 0
-                        elif bullet.facing == 2:
-                            bullet.facing = 3
-                        elif bullet.facing == 3:
-                            bullet.facing = 2
-                    if block.orientation == 1:
-                        if bullet.facing == 0:
-                            bullet.facing = 3
-                        elif bullet.facing == 1:
-                            bullet.facing = 2
-                        elif bullet.facing == 2:
-                            bullet.facing = 1
-                        elif bullet.facing == 3:
-                            bullet.facing = 0
+                    if (boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
+                        boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block)) and pyxel.frame_count % 2 == 0:
+                        if block.orientation == 0:
+                            if bullet.facing == 0:
+                                bullet.facing = 1
+                            elif bullet.facing == 1:
+                                bullet.facing = 0
+                            elif bullet.facing == 2:
+                                bullet.facing = 3
+                            elif bullet.facing == 3:
+                                bullet.facing = 2
+                                
+                        if block.orientation == 1:
+                            if bullet.facing == 0:
+                                bullet.facing = 3
+                            elif bullet.facing == 1:
+                                bullet.facing = 2
+                            elif bullet.facing == 2:
+                                bullet.facing = 1
+                            elif bullet.facing == 3:
+                                bullet.facing = 0
 
 
         if pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum == 2:
