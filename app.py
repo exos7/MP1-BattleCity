@@ -4,9 +4,9 @@ from player import Player
 from functions import boundingBox, inBounds, atTop, atBottom, atLeft, atRight, boundingBoxCollisionTop, \
 boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight
 from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize, bulletSpeed
-from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home, Mirror, enemySpawn, Blast
+from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home, Mirror, enemySpawn
 from bullets import Bullet
-from enemy import Enemy, Blue
+from enemy import Enemy, Blue, Red
 import random
 from tilemap import level_1, level_2
 from level import Screen, nextLevel, Win, gameOver
@@ -46,13 +46,12 @@ class App:
         self.startX, self.startY = ((pyxel.width - borderLeft - borderRight) // 2) - (3* tileSize) // 2, pyxel.height - borderBot - tileSize
         pyxel.load('PYXEL_RESOURCE_FILE.pyxres')
         self.player = Player(self.startX, self.startY)
-        self.totalEnemies = [Blue(16, 16), Blue(16, 32), Blue(16, 48), Blue(16, 64), Blue(16, 80), Blue(16, 96), Blue(16, 112), Blue(16, 128), Blue(16, 144), Blue(16, 160)]
+        self.totalEnemies = []
         self.enemies = []
         self.enemyNum = 10 #num of enemies needed to be eliminated 
         self.done = False
         self.screen = []
-        self.blasts = []
-
+        self.enemySpawn = []
         self.levelNum = 1
         self.level = []
         
@@ -99,8 +98,13 @@ class App:
                 elif tile == 'enemySpawn':
                     print(f'enemySpawn: {b.x}, {b.y}')
                     self.level.append(enemySpawn(b.x, b.y))
-        # self.level = [Brick(tileSize * 12, tileSize*4), Stone(tileSize * 13, tileSize*4), \
-        # Brick(tileSize*14, tileSize*4), Forest(tileSize*15, tileSize*4), Water(tileSize*16, tileSize*4),]
+                    self.enemySpawn.append((b.x, b.y))
+
+        for i in range(self.enemyNum):
+            spawn = random.randint(0, len(self.enemySpawn)-1)
+            enemyType = random.randint(0,1)
+            x, y = self.enemySpawn[spawn][0], self.enemySpawn[spawn][1]
+            self.totalEnemies.append(Blue(x,y) if enemyType == 0 else Red(x,y))
 
         pyxel.mouse(True)
 
@@ -113,7 +117,7 @@ class App:
         self.player.update()
         entityUpdate(self.player.bullets)
         entityUpdate(self.level)
-        entityUpdate(self.blasts)
+
         while len(self.enemies) < 5:
             if len(self.totalEnemies) > 0:
                 self.enemies.append(self.totalEnemies.pop())
@@ -225,7 +229,6 @@ class App:
         if pyxel.btnp(pyxel.KEY_SPACE,15,20) and not self.player.isShooting and self.player.canMove:
             self.player.isShooting = True
             self.player.bullets.append(Bullet(self.player.x, self.player.y, self.player.facing))
-            pyxel.play(0, 0)
 
 
         # bullet collision 
@@ -242,10 +245,6 @@ class App:
                     boundingBoxCollisionRight(bullet, enemy) or boundingBoxCollisionLeft(bullet, enemy):
                     self.player.isShooting = False
                     self.enemies.remove(enemy)
-                    for blast in self.blasts:
-                        print(blast.isAlive)
-                    self.blasts.append(Blast(enemy.x, enemy.y))
-                    
                     self.player.bullets.remove(bullet)
                     if self.enemyNum >= 0:
                         self.enemyNum -= 1
@@ -340,6 +339,29 @@ class App:
                                     if block.pixels[i-1][0] - bulletSpeed <= bullet.x <= block.pixels[i][0] + bulletSpeed and bullet not in block.bulletsCollided:
                                         block.bulletsCollided.append(bullet)
                                         bullet.facing = 0
+                        
+                # elif block.type == 'mirror':
+                #     if (boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
+                #         boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block)) and pyxel.frame_count % 2 == 0:
+                #         if block.orientation == 0:
+                #             if bullet.facing == 0:
+                #                 bullet.facing = 1
+                #             elif bullet.facing == 1:
+                #                 bullet.facing = 0
+                #             elif bullet.facing == 2:
+                #                 bullet.facing = 3
+                #             elif bullet.facing == 3:
+                #                 bullet.facing = 2
+                                
+                #         if block.orientation == 1:
+                #             if bullet.facing == 0:
+                #                 bullet.facing = 3
+                #             elif bullet.facing == 1:
+                #                 bullet.facing = 2
+                #             elif bullet.facing == 2:
+                #                 bullet.facing = 1
+                #             elif bullet.facing == 3:
+                #                 bullet.facing = 0
 
 
         if pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum == 2:
@@ -409,7 +431,6 @@ class App:
                 
             entityDraw(self.enemies)
             entityUpdate(self.enemies)
-            entityDraw(self.blasts) 
             #left border
             pyxel.rect(0, 0, borderLeft, pyxel.height, 13)
             #right border
@@ -421,7 +442,11 @@ class App:
             
             pyxel.blt(pyxel.width - borderRight + 8, pyxel.height - borderBot - 8, 2, 0, 32, 8, 8, 0)
             pyxel.text(pyxel.width - borderRight + 18, pyxel.height - borderBot - 6, f'{self.player.lives}', 0)
-            
+            for i in range(len(self.totalEnemies)):
+                if i % 2 != 0:
+                    pyxel.blt(pyxel.width - borderRight + 8, borderTop + 8*(i-1), 2, 0, 0, 8, 8)
+                else:
+                    pyxel.blt(pyxel.width - borderRight + 18 , borderTop + 8*(i), 2, 0, 0, 8, 8)
             pyxel.blt(pyxel.width - borderRight + 8, borderTop, 2, 0, 0, 8, 8)
             levelDraw(self.level)
             entityDraw(self.player.bullets)
