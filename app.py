@@ -105,6 +105,10 @@ class App:
 
     
     def update(self):
+
+        if pyxel.btn(pyxel.KEY_0):
+            self.player.lives += 1
+
         if not self.start:
             pyxel.play(0, 1)
             self.start = True
