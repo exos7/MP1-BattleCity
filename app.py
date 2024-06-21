@@ -4,7 +4,7 @@ from player import Player
 from functions import boundingBox, inBounds, atTop, atBottom, atLeft, atRight, boundingBoxCollisionTop, \
 boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight, isColliding, boundingBoxCollision
 from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize, bulletSpeed
-from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home, Mirror, enemySpawn
+from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home, Mirror, enemySpawn, Blast
 from bullets import Bullet
 from enemy import Enemy, Blue, Red
 import random
@@ -54,7 +54,7 @@ class App:
         self.enemySpawn = []
         self.levelNum = 1
         self.level = []
-        
+        self.blasts = []
         for row in range(0, 17):
             for col in range(0, 17):
                 tile = level_1[row][col]
@@ -111,7 +111,7 @@ class App:
         self.player.update()
         entityUpdate(self.player.bullets)
         entityUpdate(self.level)
-
+        entityUpdate(self.blasts)
         for enemy in self.totalEnemies:
             if len(self.enemies) <= 5:
                 if not any([boundingBoxCollision(enemy, enemy2) for enemy2 in self.enemies]):
@@ -228,6 +228,7 @@ class App:
         if pyxel.btnp(pyxel.KEY_SPACE,15,20) and not self.player.isShooting and self.player.canMove:
             self.player.isShooting = True
             self.player.bullets.append(Bullet(self.player.x, self.player.y, self.player.facing))
+            pyxel.play(0, 0)
 
 
         # bullet collision 
@@ -244,6 +245,7 @@ class App:
                     boundingBoxCollisionRight(bullet, enemy) or boundingBoxCollisionLeft(bullet, enemy):
                     self.player.isShooting = False
                     self.enemies.remove(enemy)
+                    self.blasts.append(Blast(enemy.x, enemy.y))
                     self.player.bullets.remove(bullet)
                     if self.enemyNum >= 0:
                         self.enemyNum -= 1
@@ -427,6 +429,7 @@ class App:
                 
             entityDraw(self.enemies)
             entityUpdate(self.enemies)
+            entityDraw(self.blasts)
             #left border
             pyxel.rect(0, 0, borderLeft, pyxel.height, 13)
             #right border
