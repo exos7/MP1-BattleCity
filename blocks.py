@@ -156,3 +156,31 @@ class Blast:
     def draw(self):
         pyxel.blt(self.x, self.y, 2, self.u, self.v, self.height, self.width, 0)
 
+
+class Powerup:
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.width = 16
+        self.height = 16
+    
+    def update(self):
+        pass
+
+    def draw(self):
+        pyxel.blt(self.x, self.y, 1, self.u, self.v, self.height, self.width, 0)
+
+class Health(Powerup):
+
+    def __init__(self, x, y):
+        super().__init__(x, y)
+        self.type = 'health'
+        self.u = 32
+        self.v = 0
+    
+    def update(self):
+        pass
+
+    def draw(self):
+        pyxel.blt(self.x, self.y, 1, self.u, self.v, self.height, self.width, 0)

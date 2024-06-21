@@ -4,7 +4,7 @@ from player import Player
 from functions import boundingBox, inBounds, atTop, atBottom, atLeft, atRight, boundingBoxCollisionTop, \
 boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight, isColliding, boundingBoxCollision
 from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize, bulletSpeed
-from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home, Mirror, enemySpawn, Blast
+from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home, Mirror, enemySpawn, Blast, Powerup, Health 
 from bullets import Bullet
 from enemy import Enemy, Blue, Red
 import random
@@ -55,6 +55,7 @@ class App:
         self.levelNum = 1
         self.level = []
         self.blasts = []
+        self.levelPowerups = []
         for row in range(0, 17):
             for col in range(0, 17):
                 tile = level_1[row][col]
@@ -96,7 +97,6 @@ class App:
             spawn = random.randint(0, len(self.enemySpawn)-1)
             enemyType = random.randint(0,1)
             x, y = self.enemySpawn[spawn][0], self.enemySpawn[spawn][1]
-            print(x,y)
             self.totalEnemies.append(Blue(x,y) if enemyType == 0 else Red(x,y))
 
 
@@ -113,12 +113,17 @@ class App:
         entityUpdate(self.level)
         entityUpdate(self.blasts)
         for enemy in self.totalEnemies:
-            if len(self.enemies) <= 5 and self.totalEnemies:
+            if len(self.enemies) < 5 and self.totalEnemies:
                 if not any([boundingBoxCollision(enemy, enemy2) for enemy2 in self.enemies]) and not boundingBoxCollision(self.player, enemy):
                     self.enemies.append(enemy)
                     self.totalEnemies.remove(enemy)
-                    
-
+        
+        print(self.levelPowerups)
+        
+        for powerup in self.levelPowerups:
+            if boundingBoxCollision(self.player, powerup):
+                self.player.lives += 1
+                self.levelPowerups.remove(powerup)
         # movement mechanics neon mains
         if inBounds(self.player.x, self.player.y) and self.player.isAlive and self.player.canMove: 
             click = False
@@ -188,6 +193,8 @@ class App:
                         self.enemies.clear()
                         s = Screen(36+borderLeft, 36+borderTop)
                         self.screen.append(gameOver(s.x, s.y))
+
+        
                         
 
                 for block in self.level:
@@ -217,8 +224,52 @@ class App:
                                     s = Screen(36+borderLeft, 36+borderTop)
                                     self.screen.append(gameOver(s.x, s.y))
                                     self.player.isAlive = False
-                                    #add game over screen
-                                    #funtionify initialization HASHFHADJKFALDSJHF
+                    
+                    elif block.type == 'mirror':
+                        for i, pixels in enumerate(block.pixels):
+                            if bullet.facing == 0: #shot beneath mirror
+                                if bullet.x == pixels[0]:
+                                    if block.orientation == 0:
+                                        if block.pixels[i][1] - bulletSpeed  <= bullet.y <= block.pixels[i-1][1] + bulletSpeed and bullet not in block.bulletsCollided:
+                                            block.bulletsCollided.append(bullet)
+                                            bullet.facing = 1
+                                    elif block.orientation == 1:
+                                        if block.pixels[i-1][1] - bulletSpeed <= bullet.y <= block.pixels[i][1] + bulletSpeed  and bullet not in block.bulletsCollided:
+                                            block.bulletsCollided.append(bullet)
+                                            bullet.facing = 3
+                            elif bullet.facing == 1:
+                                if bullet.y == pixels[1]:
+                                    if block.orientation == 0:
+                                        if block.pixels[i-1][0] - bulletSpeed <= bullet.x <= block.pixels[i][0] + bulletSpeed and bullet not in block.bulletsCollided:
+                                            block.bulletsCollided.append(bullet)
+                                            bullet.facing = 0
+                                    elif block.orientation == 1:
+                                        if block.pixels[i][0] - bulletSpeed <= bullet.x <= block.pixels[i-1][0] + bulletSpeed and bullet not in block.bulletsCollided:
+                                            block.bulletsCollided.append(bullet)
+                                            bullet.facing = 2
+                            elif bullet.facing == 2:
+                                if bullet.x == pixels[0]:
+                                    if block.orientation == 0:
+                                        if block.pixels[i-1][1] - bulletSpeed <= bullet.y <= block.pixels[i][1] + bulletSpeed and bullet not in block.bulletsCollided:
+                                            block.bulletsCollided.append(bullet)
+                                            bullet.facing = 3
+                                    elif block.orientation == 1:
+                                        if block.pixels[i][1] - bulletSpeed <= bullet.y <= block.pixels[i-1][1] + bulletSpeed and bullet not in block.bulletsCollided:
+                                            block.bulletsCollided.append(bullet)
+                                            bullet.facing = 1
+                            elif bullet.facing == 3:
+                                if bullet.y == pixels[1]:
+                                    if block.orientation == 0:
+                                        if block.pixels[i][0] - bulletSpeed <= bullet.x <= block.pixels[i-1][0] + bulletSpeed and bullet not in block.bulletsCollided:
+                                            block.bulletsCollided.append(bullet)
+                                            bullet.facing = 2
+                                    elif block.orientation == 1:
+                                        if block.pixels[i-1][0] - bulletSpeed <= bullet.x <= block.pixels[i][0] + bulletSpeed and bullet not in block.bulletsCollided:
+                                            block.bulletsCollided.append(bullet)
+                                            bullet.facing = 0
+                    
+                    
+        
                     
                     if len(enemy.bullets) == 0:
                         enemy.isShooting = False
@@ -236,7 +287,6 @@ class App:
         
         if len(self.player.bullets) == 0:
             self.player.isShooting = False
-        
         for bullet in self.player.bullets:
 
             #logic for shooting enemy
@@ -244,9 +294,18 @@ class App:
                 if boundingBoxCollisionTop(bullet, enemy) or boundingBoxCollisionBottom(bullet, enemy) or \
                     boundingBoxCollisionRight(bullet, enemy) or boundingBoxCollisionLeft(bullet, enemy):
                     self.player.isShooting = False
-                    self.enemies.remove(enemy)
-                    self.blasts.append(Blast(enemy.x, enemy.y))
+                    enemy.health -= 10
+                    if enemy.health <= 0:
+                        self.blasts.append(Blast(enemy.x, enemy.y))
+                        if self.player.killsForPowerups == 3:
+                            self.levelPowerups.append(Health(enemy.x, enemy.y))
+                            self.player.killsForPowerups = 0
+                        self.enemies.remove(enemy)
+                        self.player.killsForPowerups += 1
+                        
+                    
                     self.player.bullets.remove(bullet)
+
                     if len(self.enemies) <= 0:
                         print('you won!')
                         #function for win screen! 
@@ -258,7 +317,7 @@ class App:
                         else:
                             self.screen.append(Win(s.x, s.y))
                         self.player.canMove = False
-                        #turn this into a function ? 
+                        #turn this into a function ?
         
 
                         
@@ -337,38 +396,21 @@ class App:
                                     if block.pixels[i-1][0] - bulletSpeed <= bullet.x <= block.pixels[i][0] + bulletSpeed and bullet not in block.bulletsCollided:
                                         block.bulletsCollided.append(bullet)
                                         bullet.facing = 0
-                        
-                # elif block.type == 'mirror':
-                #     if (boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
-                #         boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block)) and pyxel.frame_count % 2 == 0:
-                #         if block.orientation == 0:
-                #             if bullet.facing == 0:
-                #                 bullet.facing = 1
-                #             elif bullet.facing == 1:
-                #                 bullet.facing = 0
-                #             elif bullet.facing == 2:
-                #                 bullet.facing = 3
-                #             elif bullet.facing == 3:
-                #                 bullet.facing = 2
-                                
-                #         if block.orientation == 1:
-                #             if bullet.facing == 0:
-                #                 bullet.facing = 3
-                #             elif bullet.facing == 1:
-                #                 bullet.facing = 2
-                #             elif bullet.facing == 2:
-                #                 bullet.facing = 1
-                #             elif bullet.facing == 3:
-                #                 bullet.facing = 0
-
 
         if pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum == 2:
             self.player.facing = 0
             self.player.canMove = True
-            self.enemies = [Blue(16, 16)]
-            self.enemyNum = 1
+            self.totalEnemies = []
+            self.enemyNum = 10
             self.screen = []
             self.player.x, self.player.y = self.startX, self.startY
+
+            for i in range(self.enemyNum):
+                spawn = random.randint(0, len(self.enemySpawn)-1)
+                enemyType = random.randint(0,1)
+                x, y = self.enemySpawn[spawn][0], self.enemySpawn[spawn][1]
+                self.totalEnemies.append(Blue(x,y) if enemyType == 0 else Red(x,y))
+
             for row in range(0, 17):
                 for col in range(0, 17):
                     # tile = level_1[row][col]
@@ -378,35 +420,27 @@ class App:
                     if tile == 'empty':
                         pass
                     elif tile == 'brick':
-                        print(f'brick: {b.x}, {b.y}')
                         self.level.append(Brick(b.x, b.y))
 
                     elif tile == 'cracked_brick':
-                        print(f'cracked_brick: {b.x}, {b.y}')
                         self.level.append(crackedBrick(b.x, b.y))
 
                     elif tile == 'stone':
-                        print(f'stone: {b.x}, {b.y}')
                         self.level.append(Stone(b.x, b.y))
 
                     elif tile == 'water':
-                        print(f'water: {b.x}, {b.y}')
                         self.level.append(Water(b.x, b.y))
 
                     elif tile == 'forest':
-                        print(f'forest: {b.x}, {b.y}')
                         self.level.append(Forest(b.x, b.y))
                     
                     elif tile == 'home':
-                        print(f'brick: {b.x}, {b.y}')
                         self.level.append(Home(b.x, b.y))
 
                     elif tile == 'mirrorPos':
-                        print(f'mirrorPos: {b.x}, {b.y}')
                         self.level.append(Mirror(b.x, b.y, 0))
                     
                     elif tile == 'mirrorNeg':
-                        print(f'mirrorNeg: {b.x}, {b.y}')
                         self.level.append(Mirror(b.x, b.y, 1))
 
         elif pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum > 2:
@@ -422,11 +456,11 @@ class App:
 
             self.player.draw()
             
-            
                 
             entityDraw(self.enemies)
             entityUpdate(self.enemies)
             entityDraw(self.blasts)
+            entityDraw(self.levelPowerups)
             #left border
             pyxel.rect(0, 0, borderLeft, pyxel.height, 13)
             #right border
@@ -438,11 +472,13 @@ class App:
             
             pyxel.blt(pyxel.width - borderRight + 8, pyxel.height - borderBot - 8, 2, 0, 32, 8, 8, 0)
             pyxel.text(pyxel.width - borderRight + 18, pyxel.height - borderBot - 6, f'{self.player.lives}', 0)
+
             for i in range(len(self.totalEnemies)):
                 if i % 2 != 0:
                     pyxel.blt(pyxel.width - borderRight + 8, borderTop + 8*(i-1), 2, 0, 0, 8, 8)
                 else:
                     pyxel.blt(pyxel.width - borderRight + 18 , borderTop + 8*(i), 2, 0, 0, 8, 8)
+
             levelDraw(self.level)
             entityDraw(self.player.bullets)
             entityDraw(self.screen)

@@ -15,6 +15,7 @@ class Player:
         self.height = 16
         self.bullets = []
         self.lives = 3
+        self.killsForPowerups = 0
         
     
     def update(self):

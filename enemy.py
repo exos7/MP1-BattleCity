@@ -26,7 +26,7 @@ class Blue(Enemy):
     def __init__(self, x, y):
         super().__init__(x, y)
         self.u, self.v = 0, 0
-        self.health = 20
+        self.health = 10
         self.type = 'blue'
         self.isShooting = False
     
