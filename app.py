@@ -9,7 +9,7 @@ from bullets import Bullet
 from enemy import Enemy, Blue, Red
 import random
 from tilemap import level_1, level_2
-from level import Screen, nextLevel, Win, gameOver
+from level import Screen, nextLevel, Win, gameOver, Start
 
 def entityDraw(entities):
     for entity in entities:
@@ -302,7 +302,7 @@ class App:
                 if boundingBoxCollisionTop(bullet, enemy) or boundingBoxCollisionBottom(bullet, enemy) or \
                     boundingBoxCollisionRight(bullet, enemy) or boundingBoxCollisionLeft(bullet, enemy):
                     self.player.isShooting = False
-                    enemy.health -= 10
+                    enemy.health -= 10 
                     if enemy.health <= 0:
                         self.blasts.append(Blast(enemy.x, enemy.y))
                         if self.player.killsForPowerups == 3:
@@ -405,7 +405,7 @@ class App:
                                         block.bulletsCollided.append(bullet)
                                         bullet.facing = 0
 
-        if (pyxel.btnp(pyxel.KEY_N) and self.player.canMove == False and self.levelNum == 2) or pyxel.btnp(pyxel.KEY_2):
+        if (pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum == 2) or pyxel.btnp(pyxel.KEY_2):
             self.level.clear()
             self.level2()
             

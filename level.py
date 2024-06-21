@@ -8,9 +8,19 @@ class Screen:
     def update(self):
         pass
 
-
     def draw(self):
         pyxel.rect(self.x, self.y, 200, 150, 13)
+
+class Start(Screen):
+    def __init__(self, x, y):
+        super().__init__(x, y)
+
+    def update(self):
+        pass
+
+    def draw(self):
+        super().draw()
+        pyxel.text(self.x, self.y*2, "Press SPACE to start!", 0)
 
 class nextLevel(Screen):
     def __init__(self, x, y):

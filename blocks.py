@@ -45,12 +45,21 @@ class Water(Block):
     def __init__(self, x, y):
         super().__init__(x, y)
         self.type = 'water'
+        self.u = 0
+        self.v = 32
 
     def update(self):
+        # if pyxel.frame_count % 60 == 0:
+        #     self.u = 0
+        # elif pyxel.frame_count % 30 == 0:
+        #     self.u = 16
+        # elif pyxel.frame_count % 15 == 0:
+        #     self.u = 32
         pass
-
+    
     def draw(self):
-        pyxel.blt(self.x, self.y, 0, 0, 32, self.height, self.width)
+        pyxel.blt(self.x, self.y, 0, self.u, self.v, self.height, self.width)
+        
 
 class Forest(Block):
     
