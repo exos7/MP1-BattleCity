@@ -113,8 +113,8 @@ class App:
         entityUpdate(self.level)
         entityUpdate(self.blasts)
         for enemy in self.totalEnemies:
-            if len(self.enemies) <= 5:
-                if not any([boundingBoxCollision(enemy, enemy2) for enemy2 in self.enemies]):
+            if len(self.enemies) <= 5 and self.totalEnemies:
+                if not any([boundingBoxCollision(enemy, enemy2) for enemy2 in self.enemies]) and not boundingBoxCollision(self.player, enemy):
                     self.enemies.append(enemy)
                     self.totalEnemies.remove(enemy)
                     
@@ -247,10 +247,7 @@ class App:
                     self.enemies.remove(enemy)
                     self.blasts.append(Blast(enemy.x, enemy.y))
                     self.player.bullets.remove(bullet)
-                    if self.enemyNum >= 0:
-                        self.enemyNum -= 1
-
-                    else:
+                    if len(self.enemies) <= 0:
                         print('you won!')
                         #function for win screen! 
                         self.level.clear()
@@ -446,7 +443,6 @@ class App:
                     pyxel.blt(pyxel.width - borderRight + 8, borderTop + 8*(i-1), 2, 0, 0, 8, 8)
                 else:
                     pyxel.blt(pyxel.width - borderRight + 18 , borderTop + 8*(i), 2, 0, 0, 8, 8)
-            pyxel.blt(pyxel.width - borderRight + 8, borderTop, 2, 0, 0, 8, 8)
             levelDraw(self.level)
             entityDraw(self.player.bullets)
             entityDraw(self.screen)
