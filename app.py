@@ -92,16 +92,12 @@ class App:
                     self.enemySpawn.append((b.x, b.y))
 
         # adds the total enemies to a list
-        for i in range(self.enemyNum -1):
+        for i in range(self.enemyNum):
             spawn = random.randint(0, len(self.enemySpawn)-1)
             enemyType = random.randint(0,1)
             x, y = self.enemySpawn[spawn][0], self.enemySpawn[spawn][1]
             self.totalEnemies.append(Blue(x,y) if enemyType == 0 else Red(x,y))
 
-        spawn = random.randint(0, len(self.enemySpawn)-1)
-        enemyType = random.randint(0,1)
-        x, y = self.enemySpawn[spawn][0], self.enemySpawn[spawn][1]
-        self.enemies.append(Blue(x,y) if enemyType == 0 else Red(x,y))
 
         pyxel.mouse(True)
 
@@ -115,14 +111,12 @@ class App:
         entityUpdate(self.player.bullets)
         entityUpdate(self.level)
 
-        for onfield in self.enemies:
-            # print('working 1')
-            for off_field in self.totalEnemies:
-                if len(self.enemies) <= 5:
-                    print('working 2')
-                    if not boundingBoxCollision(onfield, off_field):
-                        self.enemies.append(off_field)
-                        print('working 3')
+        for enemy in self.totalEnemies:
+            if len(self.enemies) <= 5:
+                if not any([boundingBoxCollision(enemy, enemy2) for enemy2 in self.enemies]):
+                    self.enemies.append(enemy)
+                    self.totalEnemies.remove(enemy)
+                    
 
         # movement mechanics neon mains
         if inBounds(self.player.x, self.player.y) and self.player.isAlive and self.player.canMove: 
