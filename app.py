@@ -225,6 +225,7 @@ class App:
         if pyxel.btnp(pyxel.KEY_SPACE,15,20) and not self.player.isShooting and self.player.canMove:
             self.player.isShooting = True
             self.player.bullets.append(Bullet(self.player.x, self.player.y, self.player.facing))
+            pyxel.play(0, 0)
 
 
         # bullet collision 
