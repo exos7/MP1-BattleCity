@@ -40,11 +40,9 @@ class App:
         '''
 
         pyxel.init(272 + borderLeft + borderRight, 272 + borderTop + borderBot) #17x17 tiles w/ border
-
-
+        pyxel.load('PYXEL_RESOURCE_FILE.pyxres')
 
         self.startX, self.startY = ((pyxel.width - borderLeft - borderRight) // 2) - (3* tileSize) // 2, pyxel.height - borderBot - tileSize
-        pyxel.load('PYXEL_RESOURCE_FILE.pyxres')
         self.player = Player(self.startX, self.startY)
         self.totalEnemies = []
         self.enemies = []
@@ -56,6 +54,8 @@ class App:
         self.level = []
         self.blasts = []
         self.levelPowerups = []
+        self.start = False
+
         for row in range(0, 17):
             for col in range(0, 17):
                 tile = level_1[row][col]
@@ -91,23 +91,27 @@ class App:
                 elif tile == 'enemySpawn':
                     self.level.append(enemySpawn(b.x, b.y))
                     self.enemySpawn.append((b.x, b.y))
-
-        # adds the total enemies to a list
+                    
         for i in range(self.enemyNum):
             spawn = random.randint(0, len(self.enemySpawn)-1)
             enemyType = random.randint(0,1)
             x, y = self.enemySpawn[spawn][0], self.enemySpawn[spawn][1]
-            self.totalEnemies.append(Blue(x,y) if enemyType == 0 else Red(x,y))
-
-
-        pyxel.mouse(True)
+            orientation = random.randint(0, 3)
+            self.totalEnemies.append(Blue(x,y,orientation) if enemyType == 0 else Red(x,y,orientation))
 
 
 
         pyxel.run(self.update, self.draw)
 
-        
+    
     def update(self):
+        if not self.start:
+            pyxel.play(0, 1)
+            self.start = True
+
+        if pyxel.btnp(pyxel.KEY_R):
+            self.restart()
+
         self.player.update()
         entityUpdate(self.player.bullets)
         entityUpdate(self.level)
@@ -209,7 +213,7 @@ class App:
                     elif block.type == 'cracked_brick' or block.type == 'stone' or block.type == 'home':
                         if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
                             boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block):
-                            if enemy: 
+                            if enemy.bullets: 
                                 enemy.bullets.remove(bullet)
                             if block.type == 'cracked_brick':
                                 block.health -= 10 
@@ -397,51 +401,10 @@ class App:
                                         block.bulletsCollided.append(bullet)
                                         bullet.facing = 0
 
-        if pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum == 2:
-            self.player.facing = 0
-            self.player.canMove = True
-            self.totalEnemies = []
-            self.enemyNum = 10
-            self.screen = []
-            self.player.x, self.player.y = self.startX, self.startY
-
-            for i in range(self.enemyNum):
-                spawn = random.randint(0, len(self.enemySpawn)-1)
-                enemyType = random.randint(0,1)
-                x, y = self.enemySpawn[spawn][0], self.enemySpawn[spawn][1]
-                self.totalEnemies.append(Blue(x,y) if enemyType == 0 else Red(x,y))
-
-            for row in range(0, 17):
-                for col in range(0, 17):
-                    # tile = level_1[row][col]
-                    tile = level_2[row][col]
-                    #Note that row and col must be rearranged to correct for pyxel's coordinate system
-                    b = Block((col+1)*tileSize, (row+1)*tileSize)
-                    if tile == 'empty':
-                        pass
-                    elif tile == 'brick':
-                        self.level.append(Brick(b.x, b.y))
-
-                    elif tile == 'cracked_brick':
-                        self.level.append(crackedBrick(b.x, b.y))
-
-                    elif tile == 'stone':
-                        self.level.append(Stone(b.x, b.y))
-
-                    elif tile == 'water':
-                        self.level.append(Water(b.x, b.y))
-
-                    elif tile == 'forest':
-                        self.level.append(Forest(b.x, b.y))
-                    
-                    elif tile == 'home':
-                        self.level.append(Home(b.x, b.y))
-
-                    elif tile == 'mirrorPos':
-                        self.level.append(Mirror(b.x, b.y, 0))
-                    
-                    elif tile == 'mirrorNeg':
-                        self.level.append(Mirror(b.x, b.y, 1))
+        if (pyxel.btnp(pyxel.KEY_N) and self.player.canMove == False and self.levelNum == 2) or pyxel.btnp(pyxel.KEY_2):
+            self.level.clear()
+            self.level2()
+            
 
         elif pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum > 2:
             #consider making initial screen
@@ -449,8 +412,118 @@ class App:
 
         elif pyxel.btnp(pyxel.KEY_SPACE) and self.player.isAlive == False:
             quit() 
+    
+    def restart(self):
+        self.startX, self.startY = ((pyxel.width - borderLeft - borderRight) // 2) - (3* tileSize) // 2, pyxel.height - borderBot - tileSize
+        self.player = Player(self.startX, self.startY)
+        self.totalEnemies = []
+        self.enemies = []
+        self.enemyNum = 10 #num of enemies needed to be eliminated 
+        self.done = False
+        self.screen = []
+        self.enemySpawn = []
+        self.levelNum = 1
+        self.level = []
+        self.blasts = []
+        self.levelPowerups = []
+        self.start = False
 
-        
+        for row in range(0, 17):
+            for col in range(0, 17):
+                tile = level_1[row][col]
+                # tile = level_2[row][col]
+                #Note that row and col must be rearranged to correct for pyxel's coordinate system
+                b = Block((col+1)*tileSize, (row+1)*tileSize)
+                if tile == 'empty':
+                    pass
+                elif tile == 'brick':
+                    self.level.append(Brick(b.x, b.y))
+
+                elif tile == 'cracked_brick':
+                    self.level.append(crackedBrick(b.x, b.y))
+
+                elif tile == 'stone':
+                    self.level.append(Stone(b.x, b.y))
+
+                elif tile == 'water':
+                    self.level.append(Water(b.x, b.y))
+
+                elif tile == 'forest':
+                    self.level.append(Forest(b.x, b.y))
+                
+                elif tile == 'home':
+                    self.level.append(Home(b.x, b.y))
+
+                elif tile == 'mirrorPos':
+                    self.level.append(Mirror(b.x, b.y, 0))
+                
+                elif tile == 'mirrorNeg':
+                    self.level.append(Mirror(b.x, b.y, 1))
+                
+                elif tile == 'enemySpawn':
+                    self.level.append(enemySpawn(b.x, b.y))
+                    self.enemySpawn.append((b.x, b.y))
+                    
+        for i in range(self.enemyNum):
+            spawn = random.randint(0, len(self.enemySpawn)-1)
+            enemyType = random.randint(0,1)
+            x, y = self.enemySpawn[spawn][0], self.enemySpawn[spawn][1]
+            orientation = random.randint(0, 3)
+            self.totalEnemies.append(Blue(x,y,orientation) if enemyType == 0 else Red(x,y,orientation))
+    
+    def level2(self):
+        self.screen.clear()
+        self.enemies.clear()
+        self.player.facing = 0
+        self.player.canMove = True
+        self.totalEnemies = []
+        self.enemyNum = 10
+        self.screen = []
+        self.levelPowerups = []
+        self.player.x, self.player.y = self.startX, self.startY
+
+        for i in range(self.enemyNum):
+            spawn = random.randint(0, len(self.enemySpawn)-1)
+            enemyType = random.randint(0,1)
+            x, y = self.enemySpawn[spawn][0], self.enemySpawn[spawn][1]
+            orientation = random.randint(0, 3)
+            self.totalEnemies.append(Blue(x,y,orientation) if enemyType == 0 else Red(x,y,orientation))
+
+        for row in range(0, 17):
+            for col in range(0, 17):
+                # tile = level_1[row][col]
+                tile = level_2[row][col]
+                #Note that row and col must be rearranged to correct for pyxel's coordinate system
+                b = Block((col+1)*tileSize, (row+1)*tileSize)
+                if tile == 'empty':
+                    pass
+                elif tile == 'brick':
+                    self.level.append(Brick(b.x, b.y))
+
+                elif tile == 'cracked_brick':
+                    self.level.append(crackedBrick(b.x, b.y))
+
+                elif tile == 'stone':
+                    self.level.append(Stone(b.x, b.y))
+
+                elif tile == 'water':
+                    self.level.append(Water(b.x, b.y))
+
+                elif tile == 'forest':
+                    self.level.append(Forest(b.x, b.y))
+                
+                elif tile == 'home':
+                    self.level.append(Home(b.x, b.y))
+
+                elif tile == 'mirrorPos':
+                    self.level.append(Mirror(b.x, b.y, 0))
+                
+                elif tile == 'mirrorNeg':
+                    self.level.append(Mirror(b.x, b.y, 1))
+                
+                elif tile == 'enemySpawn':
+                    self.level.append(enemySpawn(b.x, b.y))
+                    self.enemySpawn.append((b.x, b.y))
     def draw(self):
         if not self.done:
 
