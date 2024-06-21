@@ -72,14 +72,24 @@ class Red(Enemy):
     
     def update(self):
         
-        if self.facing == 0:
-            self.u, self.v = 0, 32
-        elif self.facing == 1:
-            self.u, self.v = 16, 32
-        elif self.facing == 2:
-            self.u, self.v = 0, 48
-        elif self.facing == 3:
-            self.u, self.v = 16, 48
+        if self.health > 10:
+            if self.facing == 0:
+                self.u, self.v = 0, 32
+            elif self.facing == 1:
+                self.u, self.v = 16, 32
+            elif self.facing == 2:
+                self.u, self.v = 0, 48
+            elif self.facing == 3:
+                self.u, self.v = 16, 48
+        else:
+            if self.facing == 0:
+                self.u, self.v = 0, 128
+            elif self.facing == 1:
+                self.u, self.v = 16, 128
+            elif self.facing == 2:
+                self.u, self.v = 0, 144
+            elif self.facing == 3:
+                self.u, self.v = 16, 144
         
     def draw(self):
         pyxel.blt(self.x, self.y, 1, self.u, self.v, self.height, self.width, 0)
