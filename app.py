@@ -2,7 +2,7 @@ from re import I
 import pyxel
 from player import Player
 from functions import boundingBox, inBounds, atTop, atBottom, atLeft, atRight, boundingBoxCollisionTop, \
-boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight
+boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight, isColliding, boundingBoxCollision
 from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize, bulletSpeed
 from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home, Mirror, enemySpawn
 from bullets import Bullet
@@ -64,42 +64,34 @@ class App:
                 if tile == 'empty':
                     pass
                 elif tile == 'brick':
-                    print(f'brick: {b.x}, {b.y}')
                     self.level.append(Brick(b.x, b.y))
 
                 elif tile == 'cracked_brick':
-                    print(f'cracked_brick: {b.x}, {b.y}')
                     self.level.append(crackedBrick(b.x, b.y))
 
                 elif tile == 'stone':
-                    print(f'stone: {b.x}, {b.y}')
                     self.level.append(Stone(b.x, b.y))
 
                 elif tile == 'water':
-                    print(f'water: {b.x}, {b.y}')
                     self.level.append(Water(b.x, b.y))
 
                 elif tile == 'forest':
-                    print(f'forest: {b.x}, {b.y}')
                     self.level.append(Forest(b.x, b.y))
                 
                 elif tile == 'home':
-                    print(f'brick: {b.x}, {b.y}')
                     self.level.append(Home(b.x, b.y))
 
                 elif tile == 'mirrorPos':
-                    print(f'mirrorPos: {b.x}, {b.y}')
                     self.level.append(Mirror(b.x, b.y, 0))
                 
                 elif tile == 'mirrorNeg':
-                    print(f'mirrorNeg: {b.x}, {b.y}')
                     self.level.append(Mirror(b.x, b.y, 1))
                 
                 elif tile == 'enemySpawn':
-                    print(f'enemySpawn: {b.x}, {b.y}')
                     self.level.append(enemySpawn(b.x, b.y))
                     self.enemySpawn.append((b.x, b.y))
 
+        # adds the total enemies to a list
         for i in range(self.enemyNum):
             spawn = random.randint(0, len(self.enemySpawn)-1)
             enemyType = random.randint(0,1)
@@ -117,10 +109,6 @@ class App:
         self.player.update()
         entityUpdate(self.player.bullets)
         entityUpdate(self.level)
-
-        while len(self.enemies) < 5:
-            if len(self.totalEnemies) > 0:
-                self.enemies.append(self.totalEnemies.pop())
 
         # movement mechanics neon mains
         if inBounds(self.player.x, self.player.y) and self.player.isAlive and self.player.canMove: 
@@ -423,9 +411,6 @@ class App:
         if not self.done:
 
             self.player.draw()
-            
-            if len(self.enemies) < 5:
-                self.enemies.append(self.totalEnemies.pop())
             
             
                 
