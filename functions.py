@@ -65,4 +65,8 @@ def boundingBoxCollisionRight(entity1, entity2):
         return True
     return False
 
-# def mirrorCollision(bullet, mirror):
+def boundingBoxCollision(entity1, entity2):
+    if boundingBoxCollisionTop(entity1, entity2) or boundingBoxCollisionBottom(entity1, entity2) or boundingBoxCollisionLeft(entity1, entity2) or boundingBoxCollisionRight(entity1, entity2):
+        return True
+    else:
+        return False
