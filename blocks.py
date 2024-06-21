@@ -136,3 +136,23 @@ class enemySpawn(Block):
 
     def draw(self):
         pyxel.blt(self.x, self.y, 2, self.u, self.v, self.height, self.width, 0)
+
+class Blast:
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+        self.width = 16
+        self.height = 16
+        self.u = 0
+        self.v = 48
+        self.isAlive = True
+    
+    def update(self):
+        self.u += 16
+        if self.u > 32:
+            self.isAlive = False
+
+    def draw(self):
+        pyxel.blt(self.x, self.y, 2, self.u, self.v, self.height, self.width, 0)
+

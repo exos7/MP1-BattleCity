@@ -4,7 +4,7 @@ from player import Player
 from functions import boundingBox, inBounds, atTop, atBottom, atLeft, atRight, boundingBoxCollisionTop, \
 boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight
 from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize, bulletSpeed
-from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home, Mirror, enemySpawn
+from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home, Mirror, enemySpawn, Blast
 from bullets import Bullet
 from enemy import Enemy, Blue
 import random
@@ -51,7 +51,8 @@ class App:
         self.enemyNum = 10 #num of enemies needed to be eliminated 
         self.done = False
         self.screen = []
-        
+        self.blasts = []
+
         self.levelNum = 1
         self.level = []
         
@@ -112,7 +113,7 @@ class App:
         self.player.update()
         entityUpdate(self.player.bullets)
         entityUpdate(self.level)
-
+        entityUpdate(self.blasts)
         while len(self.enemies) < 5:
             if len(self.totalEnemies) > 0:
                 self.enemies.append(self.totalEnemies.pop())
@@ -240,6 +241,10 @@ class App:
                     boundingBoxCollisionRight(bullet, enemy) or boundingBoxCollisionLeft(bullet, enemy):
                     self.player.isShooting = False
                     self.enemies.remove(enemy)
+                    for blast in self.blasts:
+                        print(blast.isAlive)
+                    self.blasts.append(Blast(enemy.x, enemy.y))
+                    
                     self.player.bullets.remove(bullet)
                     if self.enemyNum >= 0:
                         self.enemyNum -= 1
@@ -403,6 +408,7 @@ class App:
                 
             entityDraw(self.enemies)
             entityUpdate(self.enemies)
+            entityDraw(self.blasts) 
             #left border
             pyxel.rect(0, 0, borderLeft, pyxel.height, 13)
             #right border
