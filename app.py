@@ -96,6 +96,7 @@ class App:
             spawn = random.randint(0, len(self.enemySpawn)-1)
             enemyType = random.randint(0,1)
             x, y = self.enemySpawn[spawn][0], self.enemySpawn[spawn][1]
+            print(x,y)
             self.totalEnemies.append(Blue(x,y) if enemyType == 0 else Red(x,y))
 
 
@@ -177,7 +178,8 @@ class App:
                         boundingBoxCollisionRight(bullet, self.player) or boundingBoxCollisionLeft(bullet, self.player):
                     enemy.isShooting = False
                     self.player.lives -= 1
-                    enemy.bullets.remove(bullet)
+                    if enemy:
+                        enemy.bullets.remove(bullet) 
                     print('player was hit')
                     if self.player.life <= 0:
                         self.player.isAlive = False
@@ -200,7 +202,8 @@ class App:
                     elif block.type == 'cracked_brick' or block.type == 'stone' or block.type == 'home':
                         if boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
                             boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block):
-                            enemy.bullets.remove(bullet)
+                            if enemy: 
+                                enemy.bullets.remove(bullet)
                             if block.type == 'cracked_brick':
                                 block.health -= 10 
                                 if block.health <= 0:
@@ -244,7 +247,7 @@ class App:
                     self.player.bullets.remove(bullet)
                     if self.enemyNum >= 0:
                         self.enemyNum -= 1
-                        self.enemies.append(Blue(16, 16))
+
                     else:
                         print('you won!')
                         #function for win screen! 
