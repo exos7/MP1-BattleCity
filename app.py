@@ -3,7 +3,7 @@ import pyxel
 from player import Player
 from functions import boundingBox, inBounds, atTop, atBottom, atLeft, atRight, boundingBoxCollisionTop, \
 boundingBoxCollisionBottom, boundingBoxCollisionLeft, boundingBoxCollisionRight
-from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize
+from settings import moveSpeed, borderLeft, borderRight, borderTop, borderBot, tileSize, bulletSpeed
 from blocks import Block, Brick, crackedBrick, Water, Forest, Stone, Home, Mirror, enemySpawn
 from bullets import Bullet
 from enemy import Enemy, Blue
@@ -162,7 +162,6 @@ class App:
             willshoot = random.randint(0, 50)
             if willshoot == 1 and not enemy.isShooting:
                 enemy.isShooting = True
-                print('shoot')
                 enemy.bullets.append(Bullet(enemy.x, enemy.y, enemy.facing))
 
             enemy.bullets = [bullet for bullet in enemy.bullets if inBounds(bullet.x, bullet.y)]
@@ -294,27 +293,70 @@ class App:
                             self.player.bullets.remove(bullet)
                 
                 elif block.type == 'mirror':
-                    if (boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
-                        boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block)) and pyxel.frame_count % 2 == 0:
-                        if block.orientation == 0:
-                            if bullet.facing == 0:
-                                bullet.facing = 1
-                            elif bullet.facing == 1:
-                                bullet.facing = 0
-                            elif bullet.facing == 2:
-                                bullet.facing = 3
-                            elif bullet.facing == 3:
-                                bullet.facing = 2
+                    for i, pixels in enumerate(block.pixels):
+                        if bullet.facing == 0: #shot beneath mirror
+                            if bullet.x == pixels[0]:
+                                if block.orientation == 0:
+                                    if block.pixels[i][1] - bulletSpeed  <= bullet.y <= block.pixels[i-1][1] + bulletSpeed and bullet not in block.bulletsCollided:
+                                        block.bulletsCollided.append(bullet)
+                                        bullet.facing = 1
+                                elif block.orientation == 1:
+                                    if block.pixels[i-1][1] - bulletSpeed <= bullet.y <= block.pixels[i][1] + bulletSpeed  and bullet not in block.bulletsCollided:
+                                        block.bulletsCollided.append(bullet)
+                                        bullet.facing = 3
+                        elif bullet.facing == 1:
+                            if bullet.y == pixels[1]:
+                                if block.orientation == 0:
+                                    if block.pixels[i-1][0] - bulletSpeed <= bullet.x <= block.pixels[i][0] + bulletSpeed and bullet not in block.bulletsCollided:
+                                        block.bulletsCollided.append(bullet)
+                                        bullet.facing = 0
+                                elif block.orientation == 1:
+                                    if block.pixels[i][0] - bulletSpeed <= bullet.x <= block.pixels[i-1][0] + bulletSpeed and bullet not in block.bulletsCollided:
+                                        block.bulletsCollided.append(bullet)
+                                        bullet.facing = 2
+                        elif bullet.facing == 2:
+                            if bullet.x == pixels[0]:
+                                if block.orientation == 0:
+                                    if block.pixels[i-1][1] - bulletSpeed <= bullet.y <= block.pixels[i][1] + bulletSpeed and bullet not in block.bulletsCollided:
+                                        block.bulletsCollided.append(bullet)
+                                        bullet.facing = 3
+                                elif block.orientation == 1:
+                                    if block.pixels[i][1] - bulletSpeed <= bullet.y <= block.pixels[i-1][1] + bulletSpeed and bullet not in block.bulletsCollided:
+                                        block.bulletsCollided.append(bullet)
+                                        bullet.facing = 1
+                        elif bullet.facing == 3:
+                            if bullet.y == pixels[1]:
+                                if block.orientation == 0:
+                                    if block.pixels[i][0] - bulletSpeed <= bullet.x <= block.pixels[i-1][0] + bulletSpeed and bullet not in block.bulletsCollided:
+                                        block.bulletsCollided.append(bullet)
+                                        bullet.facing = 2
+                                elif block.orientation == 1:
+                                    if block.pixels[i-1][0] - bulletSpeed <= bullet.x <= block.pixels[i][0] + bulletSpeed and bullet not in block.bulletsCollided:
+                                        block.bulletsCollided.append(bullet)
+                                        bullet.facing = 0
+                        
+                # elif block.type == 'mirror':
+                #     if (boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
+                #         boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block)) and pyxel.frame_count % 2 == 0:
+                #         if block.orientation == 0:
+                #             if bullet.facing == 0:
+                #                 bullet.facing = 1
+                #             elif bullet.facing == 1:
+                #                 bullet.facing = 0
+                #             elif bullet.facing == 2:
+                #                 bullet.facing = 3
+                #             elif bullet.facing == 3:
+                #                 bullet.facing = 2
                                 
-                        if block.orientation == 1:
-                            if bullet.facing == 0:
-                                bullet.facing = 3
-                            elif bullet.facing == 1:
-                                bullet.facing = 2
-                            elif bullet.facing == 2:
-                                bullet.facing = 1
-                            elif bullet.facing == 3:
-                                bullet.facing = 0
+                #         if block.orientation == 1:
+                #             if bullet.facing == 0:
+                #                 bullet.facing = 3
+                #             elif bullet.facing == 1:
+                #                 bullet.facing = 2
+                #             elif bullet.facing == 2:
+                #                 bullet.facing = 1
+                #             elif bullet.facing == 3:
+                #                 bullet.facing = 0
 
 
         if pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum == 2:
@@ -370,8 +412,6 @@ class App:
 
         elif pyxel.btnp(pyxel.KEY_SPACE) and self.player.isAlive == False:
             quit() 
-        
-        print(self.totalEnemies)
 
         
     def draw(self):

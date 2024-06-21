@@ -102,10 +102,11 @@ class Mirror(Block):
         self.pixels = []
         self.bulletsCollided = []
         if self.orientation == 0:
-            self.pixels = [(self.x, self.y + self.width + i) for i in range(self.height)]
+            self.pixels = [(self.x + i, self.y + self.height - 1 - i) for i in range(self.width)]
             self.u = 0
             self.v = 64
         if self.orientation == 1:
+            self.pixels = [(self.x + i, self.y + i) for i in range(self.width)]
             self.u = 16
             self.v = 64
 
