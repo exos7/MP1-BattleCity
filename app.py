@@ -334,29 +334,6 @@ class App:
                                     if block.pixels[i-1][0] - bulletSpeed <= bullet.x <= block.pixels[i][0] + bulletSpeed and bullet not in block.bulletsCollided:
                                         block.bulletsCollided.append(bullet)
                                         bullet.facing = 0
-                        
-                # elif block.type == 'mirror':
-                #     if (boundingBoxCollisionTop(bullet, block) or boundingBoxCollisionBottom(bullet, block) or \
-                #         boundingBoxCollisionRight(bullet, block) or boundingBoxCollisionLeft(bullet, block)) and pyxel.frame_count % 2 == 0:
-                #         if block.orientation == 0:
-                #             if bullet.facing == 0:
-                #                 bullet.facing = 1
-                #             elif bullet.facing == 1:
-                #                 bullet.facing = 0
-                #             elif bullet.facing == 2:
-                #                 bullet.facing = 3
-                #             elif bullet.facing == 3:
-                #                 bullet.facing = 2
-                                
-                #         if block.orientation == 1:
-                #             if bullet.facing == 0:
-                #                 bullet.facing = 3
-                #             elif bullet.facing == 1:
-                #                 bullet.facing = 2
-                #             elif bullet.facing == 2:
-                #                 bullet.facing = 1
-                #             elif bullet.facing == 3:
-                #                 bullet.facing = 0
 
 
         if pyxel.btnp(pyxel.KEY_SPACE) and self.player.canMove == False and self.levelNum == 2:
@@ -437,11 +414,7 @@ class App:
             
             pyxel.blt(pyxel.width - borderRight + 8, pyxel.height - borderBot - 8, 2, 0, 32, 8, 8, 0)
             pyxel.text(pyxel.width - borderRight + 18, pyxel.height - borderBot - 6, f'{self.player.lives}', 0)
-            for i in range(len(self.totalEnemies)):
-                if i % 2 != 0:
-                    pyxel.blt(pyxel.width - borderRight + 8, borderTop + 8*(i-1), 2, 0, 0, 8, 8)
-                else:
-                    pyxel.blt(pyxel.width - borderRight + 18 , borderTop + 8*(i), 2, 0, 0, 8, 8)
+            
             pyxel.blt(pyxel.width - borderRight + 8, borderTop, 2, 0, 0, 8, 8)
             levelDraw(self.level)
             entityDraw(self.player.bullets)

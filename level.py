@@ -45,5 +45,13 @@ class gameOver(Screen):
         super().draw()
         pyxel.text(self.x, self.y*2, "Game Over!", 0)
 
+class enemyUI:
+
+    def __init__(self, x, y):
+        self.x = x
+        self.y = y
+    
+    
+
 
 

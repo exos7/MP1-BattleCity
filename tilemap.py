@@ -12,7 +12,7 @@ level_1 = [
     ['brick', 'brick', 'brick', 'brick', 'empty', 'empty', 'empty', 'stone', 'forest', 'forest', 'forest', 'water', 'water', 'empty', 'empty', 'empty', 'empty'], #10
     ['empty', 'empty', 'brick', 'brick', 'mirrorNeg', 'empty', 'empty', 'brick', 'forest', 'forest', 'forest', 'water', 'water', 'empty', 'brick', 'brick', 'brick'], #11
     ['empty', 'empty', 'brick', 'mirror', 'empty', 'empty', 'empty', 'brick', 'empty', 'forest', 'empty', 'water', 'water', 'empty', 'brick', 'brick', 'empty'], #12
-    ['empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'brick', 'mirrorPos', 'brick', 'empty', 'empty', 'empty', 'forest', 'forest', 'empty', 'empty'], #13
+    ['empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'brick', 'mirrorPos', 'brick', 'empty', 'empty', 'mirrorPos', 'forest', 'forest', 'empty', 'empty'], #13
     ['empty', 'stone', 'stone', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'empty', 'forest', 'forest', 'forest', 'empty'], #14
     ['empty', 'brick', 'brick', 'empty', 'stone', 'stone', 'empty', 'empty', 'empty', 'empty', 'empty', 'water', 'water', 'empty', 'forest', 'forest', 'forest'], #15
     ['empty', 'brick', 'brick', 'empty', 'brick', 'brick', 'empty', 'brick', 'brick', 'brick', 'empty', 'water', 'water', 'empty', 'forest', 'forest', 'forest'], #16
